@@ -24,11 +24,20 @@ int main(int argc, char* argv[]) {
     gladLoadGL();
     glfwSwapInterval(1);
 
+    glEnable(GL_DEPTH_TEST); // enable depth-testing
+    glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-    init();
+
+
+    Renderer renderer = Renderer();
+
+    renderer.init();
     while (!glfwWindowShouldClose(window)) {
-        render(window);
+        renderer.render(window);
+        // update other events like input handling 
         glfwPollEvents();
+        // put the stuff we've been drawing onto the display
+        glfwSwapBuffers(window);
     }
     glfwTerminate();
     return 0;

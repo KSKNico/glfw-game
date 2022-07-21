@@ -12,26 +12,22 @@
 #include "triangle.h"
 
 
+class Renderer {
+    public:
+        Renderer();
+        void init();
+        void render(GLFWwindow* window);
+        void createGeometry();
 
 
-std::vector<Triangle> objects;
-
-extern GLuint shader_programme;
-
-extern GLuint fs;
-
-extern GLuint vs;
-
-extern GLuint vbo;
-
-extern GLuint vao;
-
-std::array<GLfloat, 9> points;
-
-void init();
-
-void render(GLFWwindow* window);
-
-void createGeometry();
+    private:
+        std::vector<Triangle> objects;
+        GLuint shader_programme;
+        GLuint fs;
+        GLuint vs;
+        GLuint vbo;
+        GLuint vao;
+        std::array<GLfloat, 9> points;
+};
 
 #endif

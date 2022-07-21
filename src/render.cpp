@@ -1,7 +1,9 @@
 #include "render.h"
 #include "shader.h"
 
-void createGeometry() {
+Renderer::Renderer() {};
+
+void Renderer::createGeometry() {
     objects.push_back(
         Triangle{
             std::array<GLfloat, 3>{1.0, 0.0, 0.0},
@@ -21,8 +23,10 @@ void createGeometry() {
     }
 }
 
-void init() {
+
+void Renderer::init() {
     createGeometry();
+
 
     // Shaders
     vs = glCreateShader(GL_VERTEX_SHADER);
@@ -51,15 +55,13 @@ void init() {
 
 }
 
-void render(GLFWwindow* window) {
+void Renderer::render(GLFWwindow* window) {
   // wipe the drawing surface clear
+  glClearColor(0.2, 0.3, 0.2, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(shader_programme);
   glBindVertexArray(vao);
   // draw points 0-3 from the currently bound VAO with current in-use shader
   glDrawArrays(GL_TRIANGLES, 0, 3);
-  // update other events like input handling 
-  glfwPollEvents();
-  // put the stuff we've been drawing onto the display
-  glfwSwapBuffers(window);
+
 }
