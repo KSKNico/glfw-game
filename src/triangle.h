@@ -2,16 +2,14 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <array>
+#include <glm/matrix.hpp>
 
 
 class Triangle {
     public:
-        Triangle(std::array<GLfloat, 3> v1, std::array<GLfloat, 3> v2, std::array<GLfloat, 3> v3);
-
+        Triangle();
+        glm::mat3 points;
+        glm::mat3 colors;
         void render();
     private:
-        std::array<GLfloat, 3> v1;
-        std::array<GLfloat, 3> v2;
-        std::array<GLfloat, 3> v3;
 };

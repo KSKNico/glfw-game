@@ -7,12 +7,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 find_package(glfw3 REQUIRED)
 
+
+find_package(glm REQUIRED)
 # find_package(glad REQUIRED)
 
 # file(GLOB SOURCES src/main.cpp)
-add_executable(glfw-game src/main.cpp src/triangle.cpp src/render.cpp src/glad.c)
+add_executable(${PROJECT_NAME} src/main.cpp src/triangle.cpp src/render.cpp src/glad.c)
 
-target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 # list(APPEND CMAKE_PREFIX_PATH SDL2) OpenGL::GL
 
 

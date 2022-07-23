@@ -8,26 +8,30 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <glm/matrix.hpp>
 
 #include "triangle.h"
 
 
 class Renderer {
     public:
-        Renderer();
+        Renderer(GLFWwindow* window);
         void init();
-        void render(GLFWwindow* window);
+        void render();
         void createGeometry();
 
 
     private:
+        GLFWwindow* window;
         std::vector<Triangle> objects;
         GLuint shader_programme;
         GLuint fs;
         GLuint vs;
-        GLuint vbo;
+        GLuint vertexBuffer;
+        GLuint colorBuffer;
         GLuint vao;
-        std::array<GLfloat, 9> points;
+        glm::mat3 points;
+        glm::mat3 colors;
 };
 
 #endif
