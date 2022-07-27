@@ -11,8 +11,8 @@ find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 # find_package(glad REQUIRED)
 
-# file(GLOB SOURCES src/main.cpp)
-add_executable(${PROJECT_NAME} src/main.cpp src/triangle.cpp src/render.cpp src/glad.c)
+# file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+add_executable(${PROJECT_NAME} src/main.cpp src/triangle.cpp src/render.cpp src/camera.cpp src/glad.c)
 
 target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 # list(APPEND CMAKE_PREFIX_PATH SDL2) OpenGL::GL
