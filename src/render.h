@@ -6,12 +6,10 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
-#include <array>
 #include <algorithm>
 #include <glm/matrix.hpp>
 
 #include "triangle.h"
-
 
 class Renderer {
     public:

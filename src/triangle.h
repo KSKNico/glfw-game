@@ -1,3 +1,6 @@
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+
 #include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -12,4 +15,7 @@ class Triangle {
         glm::mat3 colors;
         void render();
     private:
+        
 };
+
+#endif
