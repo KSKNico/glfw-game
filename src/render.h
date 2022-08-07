@@ -11,7 +11,7 @@
 
 #include "triangle.h"
 #include "camera.h"
-#include "shader.h"
+// #include "shader.h"
 
 class Renderer {
     public:
