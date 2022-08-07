@@ -3,9 +3,11 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <glm/matrix.hpp>
 
 #include "shader.h"
 #include "render.h"
+#include "camera.h"
 
 
 int main(int argc, char* argv[]) {
@@ -28,11 +30,15 @@ int main(int argc, char* argv[]) {
     // glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
 
+    Camera camera = Camera(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-    Renderer renderer = Renderer(window);
+    Renderer renderer = Renderer(*window, camera);
 
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
+
+        // moves the camera
+        camera.position = glm::vec3(-0.001f, 0.0000f, 0.001f) + camera.position;
 
         // update other events like input handling 
         glfwPollEvents();

@@ -10,17 +10,20 @@
 #include <glm/matrix.hpp>
 
 #include "triangle.h"
+#include "camera.h"
+#include "shader.h"
 
 class Renderer {
     public:
-        Renderer(GLFWwindow* window);
+        Renderer(GLFWwindow& window, Camera& camera);
         void init();
         void render();
         void createGeometry();
 
 
     private:
-        GLFWwindow* window;
+        GLFWwindow& window;
+        Camera& camera;
         std::vector<Triangle> objects;
         GLuint shader_programme;
         GLuint fs;

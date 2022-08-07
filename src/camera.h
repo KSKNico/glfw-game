@@ -11,10 +11,11 @@
 class Camera {
     public:
         Camera(glm::vec3 position, glm::vec3 lookatPoint);
-        glm::mat4 cameraMatrix;
-    private:
+        glm::mat4 getCameraMatrix();
         glm::vec3 position;
         glm::vec3 lookatPoint;
+    private:
+        glm::mat4 cameraMatrix;
 };
 
 #endif

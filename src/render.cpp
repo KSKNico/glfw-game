@@ -1,7 +1,7 @@
 #include "render.h"
-#include "shader.h"
 
-Renderer::Renderer(GLFWwindow* window) : window(window)   {}
+
+Renderer::Renderer(GLFWwindow& window, Camera& camera) : window(window), camera(camera)   {}
 
 void Renderer::createGeometry() {
     // objects.push_back(
@@ -77,12 +77,14 @@ void Renderer::render() {
 
   // 
   GLint uniformMVP = glGetUniformLocation(shader_programme, "MVP");
-  glm::mat4 MVP = glm::mat4(
+  glm::mat4 modelMatrix = glm::mat4(
     glm::vec4(1.0, 0.0, 0.0, 0.0),
     glm::vec4(0.0, 1.0, 0.0, 0.0),
     glm::vec4(0.0, 0.0, 1.0, 0.0),
     glm::vec4(0.0, 0.0, 0.0, 1.0)
     );
+  glm::mat4 perspectiveMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 1000.f);
+  glm::mat4 MVP = perspectiveMatrix * camera.getCameraMatrix() * modelMatrix;
   glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
   // draw points 0-3 from the currently bound VAO with current in-use shader
   glDrawArrays(GL_TRIANGLES, 0, 3);

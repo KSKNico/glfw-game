@@ -1,3 +1,6 @@
+#ifndef SHADER_H
+#define SHADER_H
+
 static const char* vertex_shader_text =
 "#version 330\n"
 "uniform mat4 MVP;\n"
@@ -17,3 +20,5 @@ static const char* fragment_shader_text =
 "{\n"
 "    gl_FragColor = vec4(color, 1.0);\n"
 "}\n";
+
+#endif
