@@ -39,3 +39,6 @@ build/
 
 # env file
 .env
+
+# cmake
+cmake/
