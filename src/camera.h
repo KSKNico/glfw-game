@@ -1,5 +1,4 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
@@ -17,5 +16,3 @@ class Camera {
     private:
         glm::mat4 cameraMatrix;
 };
-
-#endif

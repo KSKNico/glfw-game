@@ -1,5 +1,4 @@
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
+#pragma once
 
 #include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
@@ -8,14 +7,13 @@
 #include <glm/matrix.hpp>
 
 
-class Triangle {
+class Block {
     public:
-        Triangle();
+        Block(glm::mat3 position);
+        glm::mat3 position;
         glm::mat3 points;
         glm::mat3 colors;
         void render();
     private:
         
 };
-
-#endif

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <glm/matrix.hpp>
+#include <glm/trigonometric.hpp>
 
 #include "shader.h"
 #include "render.h"
@@ -26,24 +27,26 @@ int main(int argc, char* argv[]) {
     gladLoadGL();
     glfwSwapInterval(1);
 
-    // glEnable(GL_DEPTH_TEST); // enable depth-testing
-    // glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+    glEnable(GL_DEPTH_TEST); // enable depth-testing
+    glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
 
-    Camera camera = Camera(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    Camera camera = Camera(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
     Renderer renderer = Renderer(*window, camera);
 
+    int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
 
         // moves the camera
-        camera.position = glm::vec3(-0.001f, 0.0000f, 0.001f) + camera.position;
+        // timer += 1;
+        camera.position += glm::vec3(0.0f, 0.001f, 0.0001f);
 
         // update other events like input handling 
         glfwPollEvents();
 
-        glClearColor(0.5f, 0.0f, 0.0f, 0.5f);
+        glClearColor(0.1f, 0.2f, 0.3f, 0.5f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.render();

@@ -12,14 +12,11 @@ static constexpr const char* vertex_shader_text = "#version 330\n"
 "}\n";
 
 static constexpr const char* fragment_shader_text = "#version 330\n"
-"uniform mat4 MVP;\n"
-"layout (location = 1) in vec3 vCol;\n"
-"layout (location = 0) in vec3 vPos;\n"
-"out vec3 color;\n"
+"out vec4 FragColor;\n"
+"in vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 1.0);\n"
-"    color = vCol;\n"
+"    FragColor = vec4(color, 1.0);\n"
 "}\n";
 
 Renderer::Renderer(GLFWwindow& window, Camera& camera) : window(window), camera(camera)   {}
@@ -34,15 +31,40 @@ void Renderer::createGeometry() {
     // );
 
     points = { 
-        glm::vec3(0.0f,  0.5f,  0.0f),
-        glm::vec3(0.5f, -0.5f,  0.0f),
-        glm::vec3(-0.5f, -0.5f,  0.0f)
+      glm::vec3(0.0f,  0.0f,  0.0f),
+      glm::vec3(1.0f, 0.0f,  0.0f),
+      glm::vec3(1.0f,  1.0f,  0.0f),
+      glm::vec3(0.0f, 1.0f,  0.0f),
+      glm::vec3(0.0f, 1.0f,  1.0f),
+      glm::vec3(1.0f,  1.0f,  1.0f),
+      glm::vec3(1.0f, 0.0f,  1.0f),
+      glm::vec3(0.0f,  0.0f,  1.0f)
     };
 
     colors = { 
-        glm::vec3(1.0f,  0.5f,  0.0f),
-        glm::vec3(0.5f, -0.5f,  0.0f),
-        glm::vec3(-0.5f, -0.5f,  0.0f)
+      glm::vec3(0.0f,  0.0f,  0.0f),
+      glm::vec3(1.0f, 0.0f,  0.0f),
+      glm::vec3(1.0f,  1.0f,  0.0f),
+      glm::vec3(0.0f, 1.0f,  0.0f),
+      glm::vec3(0.0f, 1.0f,  1.0f),
+      glm::vec3(1.0f,  1.0f,  1.0f),
+      glm::vec3(1.0f, 0.0f,  1.0f),
+      glm::vec3(0.0f,  0.0f,  1.0f)
+    };
+
+    indices = {
+      0, 2, 1, //face front
+      0, 3, 2,
+      2, 3, 4, //face top
+      2, 4, 5,
+      1, 2, 5, //face right
+      1, 5, 6,
+      0, 7, 4, //face left
+      0, 4, 3,
+      5, 4, 7, //face back
+      5, 7, 6,
+      0, 6, 7, //face bottom
+      0, 1, 6
     };
 }
 
@@ -69,24 +91,27 @@ void Renderer::init() {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
+    // buffer for vertex data
     vertexBuffer = 0;
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), &points[0][0], GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), &points[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-
+    // buffer for color data
     colorBuffer = 0;
     glGenBuffers(1, &colorBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), &colors[0][0], GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), &colors[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    // buffer for index data
+    indexBuffer = 0;
+    glGenBuffers(1, &indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(GLuint), &indices, GL_STATIC_DRAW);
 
 }
 
@@ -96,7 +121,6 @@ void Renderer::render() {
   glUseProgram(shader_programme);
   glBindVertexArray(vao);
 
-  // 
   GLint uniformMVP = glGetUniformLocation(shader_programme, "MVP");
   glm::mat4 modelMatrix = glm::mat4(
     glm::vec4(1.0, 0.0, 0.0, 0.0),
@@ -104,10 +128,9 @@ void Renderer::render() {
     glm::vec4(0.0, 0.0, 1.0, 0.0),
     glm::vec4(0.0, 0.0, 0.0, 1.0)
     );
-  glm::mat4 perspectiveMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 1000.f);
+  glm::mat4 perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
   glm::mat4 MVP = perspectiveMatrix * camera.getCameraMatrix() * modelMatrix;
   glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-  // draw points 0-3 from the currently bound VAO with current in-use shader
-  glDrawArrays(GL_TRIANGLES, 0, 3);
 
+  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
