@@ -9,6 +9,7 @@
 #include "shader.h"
 #include "render.h"
 #include "camera.h"
+#include "input.h"
 
 
 int main(int argc, char* argv[]) {
@@ -34,7 +35,7 @@ int main(int argc, char* argv[]) {
     Camera camera = Camera(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
     Renderer renderer = Renderer(*window, camera);
-
+ 
     int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {

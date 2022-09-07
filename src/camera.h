@@ -10,9 +10,11 @@
 class Camera {
     public:
         Camera(glm::vec3 position, glm::vec3 lookatPoint);
+        void moveCamera(Camera& camera, glm::vec3& direction, float distance);
         glm::mat4 getCameraMatrix();
         glm::vec3 position;
         glm::vec3 lookatPoint;
     private:
         glm::mat4 cameraMatrix;
 };
+

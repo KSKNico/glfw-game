@@ -7,3 +7,7 @@ glm::mat4 Camera::getCameraMatrix() {
     this->cameraMatrix = glm::lookAt(position, lookatPoint, glm::vec3(0.0f, 1.0f, 0.0f));
     return cameraMatrix;
 }
+
+void Camera::moveCamera(Camera& camera, glm::vec3& direction, float distance) {
+    camera.position += glm::normalize(direction) * distance;
+}
