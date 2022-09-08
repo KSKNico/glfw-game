@@ -35,14 +35,19 @@ int main(int argc, char* argv[]) {
     Camera camera = Camera(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
     Renderer renderer = Renderer(*window, camera);
+
+    Input input = Input(*window, camera);
  
-    int timer = 0;
+    if (pcamera == 0)
+        std::cout << "pcamera is null" << std::endl;
+
+    // int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
 
         // moves the camera
         // timer += 1;
-        camera.position += glm::vec3(0.0f, 0.001f, 0.0001f);
+        // camera.position += glm::vec3(0.0f, 0.001f, 0.0001f);
 
         // update other events like input handling 
         glfwPollEvents();

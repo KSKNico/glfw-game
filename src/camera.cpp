@@ -1,6 +1,9 @@
 #include "camera.h"
 
+Camera* pcamera;
+
 Camera::Camera(glm::vec3 position, glm::vec3 lookatPoint) : position(position), lookatPoint(lookatPoint) {
+    pcamera = this;
 }
 
 glm::mat4 Camera::getCameraMatrix() {
@@ -8,6 +11,6 @@ glm::mat4 Camera::getCameraMatrix() {
     return cameraMatrix;
 }
 
-void Camera::moveCamera(Camera& camera, glm::vec3& direction, float distance) {
-    camera.position += glm::normalize(direction) * distance;
+void Camera::moveCamera(const glm::vec3& direction, float distance) {
+    position += glm::normalize(direction) * distance;
 }

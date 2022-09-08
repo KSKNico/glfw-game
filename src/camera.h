@@ -7,10 +7,12 @@
 #include <glm/matrix.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
+
 class Camera {
     public:
         Camera(glm::vec3 position, glm::vec3 lookatPoint);
-        void moveCamera(Camera& camera, glm::vec3& direction, float distance);
+        void moveCamera(const glm::vec3& direction, float distance);
         glm::mat4 getCameraMatrix();
         glm::vec3 position;
         glm::vec3 lookatPoint;
@@ -18,3 +20,4 @@ class Camera {
         glm::mat4 cameraMatrix;
 };
 
+extern Camera* pcamera;
