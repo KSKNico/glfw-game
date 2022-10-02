@@ -12,9 +12,16 @@
 
 class Input {
     public:
-    static void moveCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void mouseCameraCallback(GLFWwindow* window, double xpos, double ypos);
     Input(GLFWwindow& window, Camera& camera);
+
 
     GLFWwindow& window;
     Camera& camera;
+
+    double oldMouseX;
+    double oldMouseY;
 };
+
+extern Input* pinput;

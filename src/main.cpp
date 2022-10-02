@@ -24,6 +24,15 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    if (glfwRawMouseMotionSupported()) {
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    }
+    else {
+        std::cout << "raw mouse motion not supported, using normal mode" << std::endl;
+    }
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     glfwMakeContextCurrent(window);
     gladLoadGL();
     glfwSwapInterval(1);
