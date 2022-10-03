@@ -20,6 +20,19 @@ void Input::keyCameraCallback(GLFWwindow* window, int key, int scancode, int act
         pcamera->moveCamera(glm::vec3(0.0, -1.0, 0.0), 0.1f);
     }
 
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        pcamera->moveCamera(pcamera->lookatDirection, 0.1f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        pcamera->moveCamera(pcamera->lookatDirection, -0.1f);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        pcamera->moveCamera(glm::cross( pcamera->lookatDirection, pcamera->upVector), -0.1f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        pcamera->moveCamera(glm::cross( pcamera->lookatDirection, pcamera->upVector), 0.1f);
+    }
 
 
     // rotating
