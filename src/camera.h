@@ -20,6 +20,7 @@ class Camera {
         glm::vec3 position;
         glm::vec3 lookatPoint;
         glm::vec3 lookatDirection;
+        glm::vec3 upVector;
     private:
         glm::mat4 cameraMatrix;
 };

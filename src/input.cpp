@@ -43,4 +43,5 @@ void Input::mouseCameraCallback(GLFWwindow* window, double mouseX, double mouseY
     pinput->oldMouseY = mouseY;
 
     pcamera->rotateCameraY((float) mouseDeltaX * -0.005f);
+    pcamera->rotateCameraX((float) mouseDeltaY * -0.005f);
 }
