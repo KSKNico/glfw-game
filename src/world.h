@@ -6,7 +6,7 @@
 
 class World {
     public:
-        World() 
+        World(int sizeX, int sizeY);
         std::vector<Block> blocks;
         
 

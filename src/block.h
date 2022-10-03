@@ -9,11 +9,16 @@
 
 class Block {
     public:
-        Block(glm::mat3 position);
-        glm::mat3 position;
+        Block(glm::vec3 position);
+        glm::vec3 position;
         glm::mat3 points;
         glm::mat3 colors;
         void render();
+
+        enum blockTypes {
+            SOLID,
+        };
     private:
+        blockTypes blockType;
         
 };

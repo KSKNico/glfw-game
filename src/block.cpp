@@ -2,7 +2,7 @@
 
 
 
-Block::Block(glm::mat3 position) : position(position) {
+Block::Block(glm::vec3 position) : position(position) {
 }
 
 void Block::render() {
