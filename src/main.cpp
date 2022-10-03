@@ -10,6 +10,7 @@
 #include "render.h"
 #include "camera.h"
 #include "input.h"
+#include "world.h"
 
 
 int main(int argc, char* argv[]) {
@@ -17,7 +18,7 @@ int main(int argc, char* argv[]) {
     if (!glfwInit()) {
         std::cout << "glfw initialization failed" << std::endl;
     }
-    GLFWwindow* window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "OpenGL Game", NULL, NULL);
     if (!window) {
         std::cout << "Window or OpenGL context creation failed" << std::endl;
         glfwTerminate();
@@ -45,10 +46,10 @@ int main(int argc, char* argv[]) {
 
     Renderer renderer = Renderer(*window, camera);
 
-    Input input = Input(*window, camera);
+    input::init(window, &camera);
+
+    World world = World(10, 10);
  
-    if (pcamera == 0)
-        std::cout << "pcamera is null" << std::endl;
 
     // int timer = 0;
     renderer.init();
