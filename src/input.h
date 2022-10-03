@@ -10,18 +10,13 @@
 #include "camera.h"
 
 
-class Input {
-    public:
-    static void keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-    static void mouseCameraCallback(GLFWwindow* window, double xpos, double ypos);
-    Input(GLFWwindow& window, Camera& camera);
+namespace input {
+    void keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void mouseCameraCallback(GLFWwindow* window, double xpos, double ypos);
+    void init(GLFWwindow* window, Camera* camera);
 
-
-    GLFWwindow& window;
-    Camera& camera;
-
-    double oldMouseX;
-    double oldMouseY;
-};
-
-extern Input* pinput;
+    extern GLFWwindow* window; 
+    extern Camera* camera;
+    extern double oldMouseX;
+    extern double oldMouseY;
+}

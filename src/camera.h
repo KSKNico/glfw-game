@@ -24,5 +24,3 @@ class Camera {
     private:
         glm::mat4 cameraMatrix;
 };
-
-extern Camera* pcamera;

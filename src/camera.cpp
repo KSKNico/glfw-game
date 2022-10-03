@@ -1,9 +1,7 @@
 #include "camera.h"
 
-Camera* pcamera;
 
 Camera::Camera(glm::vec3 position, glm::vec3 lookatPoint) : position(position), lookatPoint(lookatPoint) {
-    pcamera = this;
     lookatDirection = lookatPoint - position;
     upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }

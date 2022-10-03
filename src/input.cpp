@@ -1,60 +1,50 @@
 #include "input.h"
 
-Input* pinput;
+GLFWwindow* input::window; 
+Camera* input::camera;
+double input::oldMouseX;
+double input::oldMouseY;
 
-Input::Input(GLFWwindow& window, Camera& camera) : window(window), camera(camera) {
-    glfwSetKeyCallback(&window, keyCameraCallback);
-    glfwSetCursorPosCallback(&window, mouseCameraCallback);
-    pinput = this;
-    pinput->oldMouseX = 0;
-    pinput->oldMouseY = 0;
-
+void input::init(GLFWwindow* window, Camera* camera) {
+    input::window = window;
+    input::camera = camera;
+    glfwSetKeyCallback(window, input::keyCameraCallback);
+    glfwSetCursorPosCallback(window, input::mouseCameraCallback);
+    input::oldMouseX = 0;
+    input::oldMouseY = 0;
 }
 
-void Input::keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void input::keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     // moving
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        pcamera->moveCamera(glm::vec3(0.0, 1.0, 0.0), 0.1f);
+        input::camera->moveCamera(glm::vec3(0.0, 1.0, 0.0), 0.1f);
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        pcamera->moveCamera(glm::vec3(0.0, -1.0, 0.0), 0.1f);
+        input::camera->moveCamera(glm::vec3(0.0, -1.0, 0.0), 0.1f);
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        pcamera->moveCamera(pcamera->lookatDirection, 0.1f);
+        input::camera->moveCamera(input::camera->lookatDirection, 0.1f);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        pcamera->moveCamera(pcamera->lookatDirection, -0.1f);
+        input::camera->moveCamera(input::camera->lookatDirection, -0.1f);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        pcamera->moveCamera(glm::cross( pcamera->lookatDirection, pcamera->upVector), -0.1f);
+        input::camera->moveCamera(glm::cross( input::camera->lookatDirection, input::camera->upVector), -0.1f);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        pcamera->moveCamera(glm::cross( pcamera->lookatDirection, pcamera->upVector), 0.1f);
+        input::camera->moveCamera(glm::cross( input::camera->lookatDirection, input::camera->upVector), 0.1f);
     }
-
-
-    // rotating
-    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    //     pcamera->rotateCameraY(0.1f*mouseDeltaX);
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    //     pcamera->rotateCameraY(-0.1f    mouseDeltaX);
-    // }
-
-    // if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-    //     pcamera->moveCamera(glm::vec3(0.0, -1.0, 0.0), 1.0f);
-    // }
 }
 
-void Input::mouseCameraCallback(GLFWwindow* window, double mouseX, double mouseY) {
-    double mouseDeltaX = mouseX - pinput->oldMouseX;
-    double mouseDeltaY = mouseY - pinput->oldMouseY;
+void input::mouseCameraCallback(GLFWwindow* window, double mouseX, double mouseY) {
+    double mouseDeltaX = mouseX - input::oldMouseX;
+    double mouseDeltaY = mouseY - input::oldMouseY;
 
-    pinput->oldMouseX = mouseX;
-    pinput->oldMouseY = mouseY;
+    input::oldMouseX = mouseX;
+    input::oldMouseY = mouseY;
 
-    pcamera->rotateCameraY((float) mouseDeltaX * -0.005f);
-    pcamera->rotateCameraX((float) mouseDeltaY * -0.005f);
+    input::camera->rotateCameraY((float) mouseDeltaX * -0.005f);
+    input::camera->rotateCameraX((float) mouseDeltaY * -0.005f);
 }
