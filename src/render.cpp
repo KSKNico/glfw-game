@@ -19,7 +19,7 @@ static constexpr const char* fragment_shader_text = "#version 330\n"
 "    FragColor = vec4(color, 1.0);\n"
 "}\n";
 
-Renderer::Renderer(GLFWwindow& window, Camera& camera) : window(window), camera(camera)   {}
+Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(window), camera(camera), world(world)   {}
 
 void Renderer::createGeometry() {
     // objects.push_back(
@@ -122,19 +122,19 @@ void Renderer::render() {
   glBindVertexArray(vao);
 
   GLint uniformMVP = glGetUniformLocation(shader_programme, "MVP");
-  glm::mat4 modelMatrix = glm::mat4(
-    glm::vec4(1.0, 0.0, 0.0, 0.0),
-    glm::vec4(0.0, 1.0, 0.0, 0.0),
-    glm::vec4(0.0, 0.0, 1.0, 0.0),
-    glm::vec4(0.0, 0.0, 0.0, 1.0)
-    );
+  // glm::mat4 modelMatrix = glm::mat4(
+  //   glm::vec4(1.0, 0.0, 0.0, 0.0),
+  //   glm::vec4(0.0, 1.0, 0.0, 0.0),
+  //   glm::vec4(0.0, 0.0, 1.0, 0.0),
+  //   glm::vec4(0.0, 0.0, 0.0, 1.0)
+  //   );
   glm::mat4 perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
-  
-  glm::mat4 MVP = perspectiveMatrix * camera.getCameraMatrix() * modelMatrix;
-  glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+  glm::mat4 VP = perspectiveMatrix * camera.getCameraMatrix();
 
-  MVP = perspectiveMatrix * camera.getCameraMatrix() * glm::translate(modelMatrix, glm::vec3(0.0f, 1.0f, 0.0f));
-  glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+  glm::mat4 MVP;
+  for (Block block : world.blocks) {
+    glm::mat4 MVP = VP * glm::translate(block.position);
+    glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+  }
 }

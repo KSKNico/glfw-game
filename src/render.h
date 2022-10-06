@@ -11,11 +11,12 @@
 
 #include "block.h"
 #include "camera.h"
+#include "world.h"
 // #include "shader.h"
 
 class Renderer {
     public:
-        Renderer(GLFWwindow& window, Camera& camera);
+        Renderer(GLFWwindow& window, Camera& camera, World& world);
         void init();
         void render();
         void createGeometry();
@@ -24,6 +25,7 @@ class Renderer {
     private:
         GLFWwindow& window;
         Camera& camera;
+        World& world;
         std::vector<Block> objects;
         GLuint shader_programme;
         GLuint fs;

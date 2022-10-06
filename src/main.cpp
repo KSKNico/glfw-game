@@ -44,11 +44,13 @@ int main(int argc, char* argv[]) {
 
     Camera camera = Camera(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-    Renderer renderer = Renderer(*window, camera);
+
 
     input::init(window, &camera);
 
     World world = World(10, 10);
+
+    Renderer renderer = Renderer(*window, camera, world);
  
 
     // int timer = 0;
