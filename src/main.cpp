@@ -11,6 +11,7 @@
 #include "camera.h"
 #include "input.h"
 #include "world.h"
+#include "player.h"
 
 
 int main(int argc, char* argv[]) {
@@ -48,7 +49,9 @@ int main(int argc, char* argv[]) {
 
     input::init(window, &camera);
 
-    World world = World(10, 10);
+    Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
+
+    World world = World(10, 10, player);
 
     Renderer renderer = Renderer(*window, camera, world);
  

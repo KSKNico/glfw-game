@@ -22,7 +22,7 @@ find_package(glm CONFIG REQUIRED)
 add_compile_options(-g -Wall)
 
 # file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
-add_executable(${PROJECT_NAME} src/glad.c src/main.cpp src/block.cpp src/render.cpp src/camera.cpp src/input.cpp src/world.cpp)
+add_executable(${PROJECT_NAME} src/glad.c src/main.cpp src/block.cpp src/render.cpp src/camera.cpp src/input.cpp src/world.cpp src/player.cpp)
 
 target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 # list(APPEND CMAKE_PREFIX_PATH SDL2) OpenGL::GL
