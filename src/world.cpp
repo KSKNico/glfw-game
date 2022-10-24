@@ -18,7 +18,21 @@ World::World(int sizeX, int sizeY, Player &player) : player(player) {
 }
 
 void World::calculatePhysics() {
-    player.movePlayer(player.speed);
+    // If next location is in bounding box of cube, set player's speed to 0
+    glm::vec3 nextLocation = player.position + player.speed;
+    for (auto block : blocks) {
+        if (nextLocation[0] < block.position[0]+1 && 
+        nextLocation[0] > block.position[0] &&
+        nextLocation[1] < block.position[1]+1 && 
+        nextLocation[1] > block.position[1] &&
+        nextLocation[2] < block.position[2]+1 && 
+        nextLocation[2] > block.position[2]) {
+            player.speed[0] = 0.0f, player.speed[1] = 0.0f, player.speed[2] = 0.0f;
+        }
+    }
+    player.movePlayer(nextLocation);
+    // this is the gravity added onto the speed
+    player.speed += glm::vec3(0.0f, 0.01f, 0.0f);
 }
 
 
