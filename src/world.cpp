@@ -18,7 +18,7 @@ World::World(int sizeX, int sizeY, Player &player) : player(player) {
 }
 
 void World::calculatePhysics() {
-    player.position -= glm::vec3(0.0f, gravitation, 0.0f);
+    player.movePlayer(player.speed);
 }
 
 
