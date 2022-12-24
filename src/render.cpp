@@ -131,9 +131,10 @@ void Renderer::render() {
   glm::mat4 perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
   glm::mat4 VP = perspectiveMatrix * camera.getCameraMatrix();
 
-  glm::mat4 MVP;
-  for (Block block : world.blocks) {
-    glm::mat4 MVP = VP * glm::translate(block.position);
+  for (auto pair : world.blocks) {
+    glm::vec3 coordinates = glm::vec3(std::get<0>(pair.first), std::get<1>(pair.first), std::get<2>(pair.first));
+    // Block block = pair.second;
+    glm::mat4 MVP = VP * glm::translate(coordinates);
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
   }
