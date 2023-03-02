@@ -59,3 +59,23 @@ void World::calculatePhysics() {
 }
 
 
+
+Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRange) {
+    // bound check
+    double x1 = int(position[0]-maxRange);
+    double x2 = int(position[0]+maxRange);
+
+    double y1 = int(position[1]-maxRange);
+    double y2 = int(position[1]+maxRange);
+
+    double z1 = int(position[2]-maxRange);
+    double z2 = int(position[2]+maxRange);
+
+    for (int x = x1; x <= x2; x++) {
+        for (int y = y1; y <= y2; y++) {
+            for (int z = z1; z <= z2; z++) {
+                
+            }
+        }
+    }
+}
