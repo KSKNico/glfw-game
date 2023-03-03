@@ -9,16 +9,20 @@
 
 class Block {
     public:
-        Block(glm::vec3 position);
+        enum Type {
+            AIR = 0,
+            SOLID,
+        };
+
+        Block(glm::vec3 position, Type type = Type::AIR);
         glm::vec3 position;
         glm::mat3 points;
         glm::mat3 colors;
-        void render();
+        bool hidden;
+        Type type;
 
-        enum blockTypes {
-            SOLID,
-        };
+        void render();
+        bool isSolid() const;
     private:
-        blockTypes blockType;
         
 };
