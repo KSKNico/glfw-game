@@ -131,11 +131,19 @@ void Renderer::render() {
   glm::mat4 perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
   glm::mat4 VP = perspectiveMatrix * camera.getCameraMatrix();
 
-  for (auto pair : world.blocks) {
-    glm::vec3 coordinates = glm::vec3(std::get<0>(pair.first), std::get<1>(pair.first), std::get<2>(pair.first));
-    // Block block = pair.second;
-    glm::mat4 MVP = VP * glm::translate(coordinates);
-    glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+  for (int i = 0; i < world.sizeX; i++) {
+    for (int j = 0; j < world.sizeY; j++) {
+      for (int k = 0; k < world.sizeZ; k++) {
+        Block &currentBlock = world.blocks[i][j][k];
+        if (currentBlock.hidden || !currentBlock.isSolid() ) {
+          continue;
+        }
+        glm::vec3 coordinates = currentBlock.position;
+        // Block block = pair.second;
+        glm::mat4 MVP = VP * glm::translate(coordinates);
+        glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+      }
+    }
   }
 }
