@@ -52,15 +52,30 @@ int main(int argc, char* argv[]) {
 
     Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
 
-    World world = World(10, 10, player);
+    World world = World(100, 100, 100, player);
     // world.populateWorld(30, 30, 30);
 
     Renderer renderer = Renderer(*window, camera, world);
  
+    double lastTime = glfwGetTime();
+    int nbFrames = 0;
 
     // int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
+
+
+
+        // Measure speed
+        double currentTime = glfwGetTime();
+        nbFrames++;
+        if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
+            // printf and reset timer
+            printf("%f ms/frame\t%i FPS\n", 1000.0/double(nbFrames), nbFrames);
+            nbFrames = 0;
+            lastTime += 1.0;
+        }
+
 
         // moves the camera
         // timer += 1;
