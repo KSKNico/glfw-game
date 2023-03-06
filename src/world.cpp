@@ -114,9 +114,9 @@ void World::calculatePhysics() {
 
 
 
-Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRange) {
+/* Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRange) {
     // bound check
-/*     double x1 = int(position[0]-maxRange);
+     double x1 = int(position[0]-maxRange);
     double x2 = int(position[0]+maxRange);
 
     double y1 = int(position[1]-maxRange);
@@ -129,7 +129,7 @@ Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRa
         for (int y = y1; y <= y2; y++) {
             for (int z = z1; z <= z2; z++) {
                 
+            }
         }
     } 
 } */
-}

@@ -38,5 +38,5 @@ class World {
         /// @param direction Direction in which the line is to be drawn
         /// @param maxRange Stops if no block is found whose distance is closer or equal to maxRange
         /// @return A reference to the closest block
-        Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRange);        
+        // Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRange);        
 };
