@@ -34,6 +34,17 @@ World::World(int sizeX, int sizeY, int sizeZ, Player &player) : sizeX(sizeX), si
         }
     }
 
+    // creates a vector with pointers to all visible blocks
+    visibleBlocks = std::vector<std::shared_ptr<Block>>();
+    for (int i = 0; i < sizeX; i++){
+        for (int j = 0; j < sizeY; j++) {
+            for (int k = 0; k < sizeZ; k++) {
+                if (!this->blocks[i][j][k].hidden) {
+                    visibleBlocks.push_back(std::shared_ptr<Block>(&blocks[i][j][k]));
+                }
+            }
+        }
+    }
 }
 
 
@@ -118,7 +129,7 @@ Block& closestBlockInLOS(glm::vec3 &position, glm::vec3 &direction, double maxRa
         for (int y = y1; y <= y2; y++) {
             for (int z = z1; z <= z2; z++) {
                 
-            }
         }
-    } */
+    } 
+} */
 }

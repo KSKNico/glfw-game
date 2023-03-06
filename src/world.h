@@ -3,6 +3,7 @@
 #include "block.h"
 #include "player.h"
 #include <vector>
+#include <memory>
 #include <random>
 #include <map>
 #include <glm/matrix.hpp>
@@ -17,6 +18,8 @@ class World {
         int sizeY;
         int sizeZ;
         Player &player;
+        std::vector<std::shared_ptr<Block>> visibleBlocks;
+
         void calculatePhysics();
         // void populateWorld(int sizeX, int sizeY, int sizeZ, int height);
 
