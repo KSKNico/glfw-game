@@ -37,5 +37,6 @@ class Renderer {
         std::array<glm::vec3, 8> points;
         std::array<glm::vec3, 8> colors;
         std::array<GLuint, 36> indices;
+        glm::mat4 perspectiveMatrix;
 
 };
