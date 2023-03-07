@@ -14,9 +14,8 @@ list(APPEND CMAKE_PREFIX_PATH "E:/vcpkg/installed/x64-windows/share")
 
 # list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-find_package(glfw3 CONFIG REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 find_package(glm CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
 
 # file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 add_executable(
@@ -30,8 +29,8 @@ add_executable(
   src/world.cpp
   src/player.cpp)
 
-target_link_libraries(${PROJECT_NAME} glfw glm::glm OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} glfw glm::glm -static)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_compile_features(${PROJECT_NAME} PRIVATE c_std_11)
-target_compile_options(${PROJECT_NAME} PRIVATE -g -Wall)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
 # list(APPEND CMAKE_PREFIX_PATH SDL2) OpenGL::GL
