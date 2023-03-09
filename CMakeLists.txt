@@ -11,6 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/release)
 set(OpenGL_GL_PREFERENCE "GLVND")
 
 list(APPEND CMAKE_PREFIX_PATH "E:/vcpkg/installed/x64-windows/share")
+list(APPEND CMAKE_PREFIX_PATH "E:/vcpkg/installed/x86-windows/share")
+
 
 # list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -27,9 +29,12 @@ add_executable(
   src/camera.cpp
   src/input.cpp
   src/world.cpp
-  src/player.cpp)
+  src/player.cpp
+  src/std_image.cpp
+  src/jsoncpp.cpp)
 
-target_link_libraries(${PROJECT_NAME} glfw glm::glm -static)
+
+target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_compile_features(${PROJECT_NAME} PRIVATE c_std_11)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
