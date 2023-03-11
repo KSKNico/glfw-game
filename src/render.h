@@ -8,11 +8,14 @@
 #include <array>
 #include <algorithm>
 #include <glm/matrix.hpp>
+#include <iostream>
 
 #include "block.h"
 #include "camera.h"
 #include "world.h"
 // #include "shader.h"
+
+#include <stb_image.h>
 
 class Renderer {
     public:
@@ -32,10 +35,13 @@ class Renderer {
         GLuint vs;
         GLuint vertexBuffer;
         GLuint colorBuffer;
+        GLuint textureCoordinatesBuffer;
         GLuint indexBuffer;
         GLuint vao;
+        GLuint texture;
         std::array<glm::vec3, 8> points;
         std::array<glm::vec3, 8> colors;
+        std::array<glm::vec2, 8> textureCoordinates;
         std::array<GLuint, 36> indices;
         glm::mat4 perspectiveMatrix;
 

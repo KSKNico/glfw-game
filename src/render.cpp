@@ -2,21 +2,26 @@
 
 static constexpr const char* vertex_shader_text = "#version 330\n"
 "uniform mat4 MVP;\n"
+"layout (location = 2) in vec2 vTexCoord;\n"
 "layout (location = 1) in vec3 vCol;\n"
 "layout (location = 0) in vec3 vPos;\n"
-"out vec3 color;\n"
+"out vec3 Color;\n"
+"out vec2 TexCoord;\n"
 "void main()\n"
 "{\n"
 "    gl_Position = MVP * vec4(vPos, 1.0);\n"
-"    color = vCol;\n"
+"    Color = vCol;\n"
+"    TexCoord = vTexCoord;\n"
 "}\n";
 
 static constexpr const char* fragment_shader_text = "#version 330\n"
 "out vec4 FragColor;\n"
-"in vec3 color;\n"
+"in vec3 Color;\n"
+"in vec2 TexCoord;\n"
+"uniform sampler2D uTexture;\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(color, 1.0);\n"
+"    FragColor = texture(uTexture, TexCoord)\n"
 "}\n";
 
 Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(window), camera(camera), world(world)   {
@@ -52,6 +57,17 @@ void Renderer::createGeometry() {
       glm::vec3(1.0f,  1.0f,  1.0f),
       glm::vec3(1.0f, 0.0f,  1.0f),
       glm::vec3(0.0f,  0.0f,  1.0f)
+    };
+
+    textureCoordinates = { 
+      glm::vec2(0.0f,  0.0f),
+      glm::vec2(1.0f,  0.0f),
+      glm::vec2(1.0f,  1.0f),
+      glm::vec2(0.0f,  1.0f),
+      glm::vec2(0.0f,  0.0f),
+      glm::vec2(1.0f,  0.0f),
+      glm::vec2(1.0f,  1.0f),
+      glm::vec2(0.0f,  1.0f)
     };
 
     indices = {
@@ -109,6 +125,39 @@ void Renderer::init() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+    textureCoordinatesBuffer = 0;
+    glGenBuffers(1, &textureCoordinatesBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(GLfloat), &textureCoordinates[0][0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    texture = 0;
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("../resources/arrow.jpg", &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+        if (stbi_failure_reason()) std::cout << stbi_failure_reason();
+    }
+
+    stbi_image_free(data);
+
+
     // buffer for index data
     indexBuffer = 0;
     glGenBuffers(1, &indexBuffer);
@@ -138,6 +187,9 @@ void Renderer::render() {
     glm::mat4 MVP = VP * glm::translate(block_ptr->position);
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glDrawElements(GL_TRIANGLES, 8, GL_UNSIGNED_INT, 0);
   }
 
   /* for (int i = 0; i < world.sizeX; i++) {
