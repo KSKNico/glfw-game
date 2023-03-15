@@ -3,10 +3,6 @@ project(glfw-game VERSION 0.1.0)
 
 set(CMAKE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
-set(CMAKE_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/release)
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 
@@ -38,4 +34,10 @@ target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_compile_features(${PROJECT_NAME} PRIVATE c_std_11)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
+
+
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME_DEBUG "glfw-game_debug")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME_RELEASE "glfw-game_release")
+
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 # list(APPEND CMAKE_PREFIX_PATH SDL2) OpenGL::GL
