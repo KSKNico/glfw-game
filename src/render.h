@@ -7,13 +7,15 @@
 #include <vector>
 #include <array>
 #include <algorithm>
-#include <glm/matrix.hpp>
+#include <memory>
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <glm/matrix.hpp>
 
 #include "block.h"
 #include "camera.h"
 #include "world.h"
-// #include "shader.h"
 
 #include <stb_image.h>
 
@@ -22,8 +24,11 @@ class Renderer {
         Renderer(GLFWwindow& window, Camera& camera, World& world);
         void init();
         void render();
-        void createGeometry();
 
+        /// @brief Reads shaderfile from ../resources/shaders/<name>.glsl
+        /// @param name Name of the glsl file (without extension)
+        /// @return Entire content of that file as an std::string
+        static std::string loadShader(const std::string &name);
 
     private:
         GLFWwindow& window;
@@ -39,10 +44,5 @@ class Renderer {
         GLuint indexBuffer;
         GLuint vao;
         GLuint texture;
-        std::array<glm::vec3, 8> points;
-        std::array<glm::vec3, 8> colors;
-        std::array<glm::vec2, 8> textureCoordinates;
-        std::array<GLuint, 36> indices;
         glm::mat4 perspectiveMatrix;
-
 };

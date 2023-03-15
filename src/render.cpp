@@ -1,108 +1,101 @@
 #include "render.h"
 
-static constexpr const char* vertex_shader_text = "#version 330\n"
-"uniform mat4 MVP;\n"
-"layout (location = 2) in vec2 vTexCoord;\n"
-"layout (location = 1) in vec3 vCol;\n"
-"layout (location = 0) in vec3 vPos;\n"
-"out vec3 Color;\n"
-"out vec2 TexCoord;\n"
-"void main()\n"
-"{\n"
-"    gl_Position = MVP * vec4(vPos, 1.0);\n"
-"    Color = vCol;\n"
-"    TexCoord = vTexCoord;\n"
-"}\n";
-
-static constexpr const char* fragment_shader_text = "#version 330\n"
-"out vec4 FragColor;\n"
-"in vec3 Color;\n"
-"in vec2 TexCoord;\n"
-"uniform sampler2D uTexture;\n"
-"void main()\n"
-"{\n"
-"    FragColor = texture(uTexture, TexCoord)\n"
-"}\n";
-
 Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(window), camera(camera), world(world)   {
   perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
 }
 
-void Renderer::createGeometry() {
-    // objects.push_back(
-    //     Triangle{
-    //         std::array<GLfloat, 3>{1.0, 0.0, 0.0},
-    //         std::array<GLfloat, 3>{0.5, 0.0, 1.0},
-    //         std::array<GLfloat, 3>{0.0, 0.0, 1.0},
-    //     }
-    // );
-
-    points = { 
-      glm::vec3(0.0f,  0.0f,  0.0f),
-      glm::vec3(1.0f, 0.0f,  0.0f),
-      glm::vec3(1.0f,  1.0f,  0.0f),
-      glm::vec3(0.0f, 1.0f,  0.0f),
-      glm::vec3(0.0f, 1.0f,  1.0f),
-      glm::vec3(1.0f,  1.0f,  1.0f),
-      glm::vec3(1.0f, 0.0f,  1.0f),
-      glm::vec3(0.0f,  0.0f,  1.0f)
-    };
-
-    colors = { 
-      glm::vec3(0.0f,  0.0f,  0.0f),
-      glm::vec3(1.0f, 0.0f,  0.0f),
-      glm::vec3(1.0f,  1.0f,  0.0f),
-      glm::vec3(0.0f, 1.0f,  0.0f),
-      glm::vec3(0.0f, 1.0f,  1.0f),
-      glm::vec3(1.0f,  1.0f,  1.0f),
-      glm::vec3(1.0f, 0.0f,  1.0f),
-      glm::vec3(0.0f,  0.0f,  1.0f)
-    };
-
-    textureCoordinates = { 
-      glm::vec2(0.0f,  0.0f),
-      glm::vec2(1.0f,  0.0f),
-      glm::vec2(1.0f,  1.0f),
-      glm::vec2(0.0f,  1.0f),
-      glm::vec2(0.0f,  0.0f),
-      glm::vec2(1.0f,  0.0f),
-      glm::vec2(1.0f,  1.0f),
-      glm::vec2(0.0f,  1.0f)
-    };
-
-    indices = {
-      0, 2, 1, //face front
-      0, 3, 2,
-      2, 3, 4, //face top
-      2, 4, 5,
-      1, 2, 5, //face right
-      1, 5, 6,
-      0, 7, 4, //face left
-      0, 4, 3,
-      5, 4, 7, //face back
-      5, 7, 6,
-      0, 6, 7, //face bottom
-      0, 1, 6
-    };
+std::string Renderer::loadShader(const std::string& name) {
+  std::ifstream ifs("../resources/shaders/" + name + ".glsl");
+  std::string text((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()) );
+  return text;
 }
 
 
 void Renderer::init() {
-    createGeometry();
+    // createGeometry();
+
+    world.createMesh();
+
+    const std::string vertex_shader_text = Renderer::loadShader("vertex_shader");
+    const std::string fragment_shader_text = Renderer::loadShader("fragment_shader");
+    const GLchar* source;
+    GLint isCompiled;
 
 
     // Shaders
+    source = (GLchar *) vertex_shader_text.c_str();
     vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vertex_shader_text, NULL);
+    glShaderSource(vs, 1, &source, NULL);
     glCompileShader(vs);
+
+    isCompiled = 0;
+    glGetShaderiv(vs, GL_COMPILE_STATUS, &isCompiled);
+    if(isCompiled == GL_FALSE)
+    {
+      GLint maxLength = 0;
+      glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &maxLength);
+
+      // The maxLength includes the NULL character
+      std::vector<GLchar> infoLog(maxLength);
+      glGetShaderInfoLog(vs, maxLength, &maxLength, &infoLog[0]);
+      
+      // We don't need the shader anymore.
+      glDeleteShader(vs);
+
+      for (auto c: infoLog) {
+        std::cout << c;
+      }
+      return;
+    }
+
+
+    source = (GLchar *) fragment_shader_text.c_str();
     fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragment_shader_text, NULL);
+    glShaderSource(fs, 1, &source, NULL);
     glCompileShader(fs);
+
+    isCompiled = 0;
+    glGetShaderiv(fs, GL_COMPILE_STATUS, &isCompiled);
+    if(isCompiled == GL_FALSE)
+    {
+      GLint maxLength = 0;
+      glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &maxLength);
+
+      // The maxLength includes the NULL character
+      std::vector<GLchar> infoLog(maxLength);
+      glGetShaderInfoLog(fs, maxLength, &maxLength, &infoLog[0]);
+      
+      // We don't need the shader anymore.
+      glDeleteShader(fs);
+
+      for (auto c: infoLog) {
+        std::cout << c;
+      }
+      
+      return;
+    }
+
 
     shader_programme = glCreateProgram();
     glAttachShader(shader_programme, fs);
     glAttachShader(shader_programme, vs);
     glLinkProgram(shader_programme);
+
+    GLint program_linked;
+    glGetProgramiv(shader_programme, GL_LINK_STATUS, &program_linked);
+    if (program_linked != GL_TRUE)
+    {
+      GLsizei log_length = 0;
+      GLchar message[1024];
+      glGetProgramInfoLog(shader_programme, 1024, &log_length, message);
+      for (auto c: message) {
+        std::cout << c;
+      }
+
+
+    }
+
+
 
     // init vertex array object
     vao = 0;
@@ -113,7 +106,7 @@ void Renderer::init() {
     vertexBuffer = 0;
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), &points[0][0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3 * world.vertexPositions.size() * sizeof(GLfloat), &world.vertexPositions[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
@@ -121,18 +114,19 @@ void Renderer::init() {
     colorBuffer = 0;
     glGenBuffers(1, &colorBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), &colors[0][0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3 * world.vertexColors.size() * sizeof(GLfloat), &world.vertexColors[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+/*
     textureCoordinatesBuffer = 0;
     glGenBuffers(1, &textureCoordinatesBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
     glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(GLfloat), &textureCoordinates[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL); */
 
-    texture = 0;
+    /* texture = 0;
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -155,56 +149,30 @@ void Renderer::init() {
         if (stbi_failure_reason()) std::cout << stbi_failure_reason();
     }
 
-    stbi_image_free(data);
+    stbi_image_free(data); */
 
+    std::vector<GLuint> indices = std::vector<GLuint>();
+    for (GLuint i = 0; i < world.vertexPositions.size(); ++i) {
+      indices.push_back(i);
+    }
 
     // buffer for index data
     indexBuffer = 0;
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(GLuint), &indices, GL_STATIC_DRAW);
-
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 }
 
 void Renderer::render() {
-  // wipe the drawing surface clear
 
   glUseProgram(shader_programme);
   glBindVertexArray(vao);
 
   GLint uniformMVP = glGetUniformLocation(shader_programme, "MVP");
-  // glm::mat4 modelMatrix = glm::mat4(
-  //   glm::vec4(1.0, 0.0, 0.0, 0.0),
-  //   glm::vec4(0.0, 1.0, 0.0, 0.0),
-  //   glm::vec4(0.0, 0.0, 1.0, 0.0),
-  //   glm::vec4(0.0, 0.0, 0.0, 1.0)
-  //   );
 
   glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
+  glm::mat4 MVP = VP;
 
-  for (std::shared_ptr<Block> block_ptr : world.visibleBlocks) {
-    // Block block = pair.second;
-    glm::mat4 MVP = VP * glm::translate(block_ptr->position);
-    glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glDrawElements(GL_TRIANGLES, 8, GL_UNSIGNED_INT, 0);
-  }
-
-  /* for (int i = 0; i < world.sizeX; i++) {
-    for (int j = 0; j < world.sizeY; j++) {
-      for (int k = 0; k < world.sizeZ; k++) {
-        Block &currentBlock = world.blocks[i][j][k];
-        if (currentBlock.hidden || !currentBlock.isSolid() ) {
-          continue;
-        }
-        glm::vec3 coordinates = currentBlock.position;
-        // Block block = pair.second;
-        glm::mat4 MVP = VP * glm::translate(coordinates);
-        glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-      }
-    }
-  } */
+  glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
+  glDrawElements(GL_TRIANGLES, world.vertexPositions.size(), GL_UNSIGNED_INT, 0);    
 }

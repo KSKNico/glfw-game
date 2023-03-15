@@ -6,7 +6,6 @@
 #include <glm/matrix.hpp>
 #include <glm/trigonometric.hpp>
 
-#include "shader.h"
 #include "render.h"
 #include "camera.h"
 #include "input.h"
@@ -44,7 +43,7 @@ int main(int argc, char* argv[]) {
     glEnable(GL_CULL_FACE);
 
 
-    Camera camera = Camera(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    Camera camera = Camera(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
 
@@ -74,6 +73,7 @@ int main(int argc, char* argv[]) {
             printf("%f ms/frame\t%i FPS\n", 1000.0/double(nbFrames), nbFrames);
             nbFrames = 0;
             lastTime += 1.0;
+            // printf("Player pos: %f %f %f\n", camera.position[0], camera.position[1], camera.position[2]);
         }
 
 
