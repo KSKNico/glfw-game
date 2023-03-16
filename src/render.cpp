@@ -76,18 +76,18 @@ void Renderer::init() {
     }
 
 
-    shader_programme = glCreateProgram();
-    glAttachShader(shader_programme, fs);
-    glAttachShader(shader_programme, vs);
-    glLinkProgram(shader_programme);
+    shader = glCreateProgram();
+    glAttachShader(shader, fs);
+    glAttachShader(shader, vs);
+    glLinkProgram(shader);
 
     GLint program_linked;
-    glGetProgramiv(shader_programme, GL_LINK_STATUS, &program_linked);
+    glGetProgramiv(shader, GL_LINK_STATUS, &program_linked);
     if (program_linked != GL_TRUE)
     {
       GLsizei log_length = 0;
       GLchar message[1024];
-      glGetProgramInfoLog(shader_programme, 1024, &log_length, message);
+      glGetProgramInfoLog(shader, 1024, &log_length, message);
       for (auto c: message) {
         std::cout << c;
       }
@@ -118,26 +118,26 @@ void Renderer::init() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-/*
+    // buffer for texture coordiantes
     textureCoordinatesBuffer = 0;
     glGenBuffers(1, &textureCoordinatesBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(GLfloat), &textureCoordinates[0][0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 2 * world.textureCoordinates.size() * sizeof(GLfloat), &world.textureCoordinates[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL); */
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
-    /* texture = 0;
+    texture = 0;
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("../resources/arrow.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("../resources/textures/uv_grid_opengl.jpg", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -149,7 +149,11 @@ void Renderer::init() {
         if (stbi_failure_reason()) std::cout << stbi_failure_reason();
     }
 
-    stbi_image_free(data); */
+    stbi_image_free(data);
+
+    // glUseProgram(shader);
+    // glUniform1i(glGetUniformLocation(shader, "ourTexture"), texture);
+
 
     std::vector<GLuint> indices = std::vector<GLuint>();
     for (GLuint i = 0; i < world.vertexPositions.size(); ++i) {
@@ -165,10 +169,13 @@ void Renderer::init() {
 
 void Renderer::render() {
 
-  glUseProgram(shader_programme);
+
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  glUseProgram(shader);
   glBindVertexArray(vao);
 
-  GLint uniformMVP = glGetUniformLocation(shader_programme, "MVP");
+  GLint uniformMVP = glGetUniformLocation(shader, "MVP");
 
   glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
   glm::mat4 MVP = VP;

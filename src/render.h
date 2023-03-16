@@ -35,7 +35,7 @@ class Renderer {
         Camera& camera;
         World& world;
         std::vector<Block> objects;
-        GLuint shader_programme;
+        GLuint shader;
         GLuint fs;
         GLuint vs;
         GLuint vertexBuffer;

@@ -109,6 +109,14 @@ void World::createMesh() {
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 0.0f));
                 }
 
                 if (x-1 < 0 || this->blocks[x-1][y][z].type == Block::Type::AIR) {
@@ -128,6 +136,14 @@ void World::createMesh() {
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 0.0f));
                 }
 
                 if (z+1 >= sizeZ || this->blocks[x][y][z+1].type == Block::Type::AIR) {
@@ -147,6 +163,14 @@ void World::createMesh() {
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 0.0f));
                 }
 
                 if (z-1 < 0 || this->blocks[x][y][z-1].type == Block::Type::AIR) {
@@ -166,6 +190,14 @@ void World::createMesh() {
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 0.0f));
                 }
 
                 if (y+1 >= sizeY || this->blocks[x][y+1][z].type == Block::Type::AIR) {
@@ -185,6 +217,14 @@ void World::createMesh() {
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 0.0f));
                 }
 
                 if (y-1 < 0 || this->blocks[x][y-1][z].type == Block::Type::AIR) {
@@ -204,6 +244,14 @@ void World::createMesh() {
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+
+                    textureCoordinates.push_back(glm::vec2(0.0f, 0.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 1.0f));
+                    textureCoordinates.push_back(glm::vec2(1.0f, 0.0f));
                 }
             }
         }
