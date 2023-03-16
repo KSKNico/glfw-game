@@ -14,7 +14,7 @@ World::World(int sizeX, int sizeY, int sizeZ, Player &player) : sizeX(sizeX), si
             std::vector<Block> yVector = std::vector<Block>();
             for (int k = 0; k < sizeZ; k++) {
                 int randomNumber = distr(gen);
-                if (randomNumber >= 10) {
+                if (randomNumber >= 5) {
                     yVector.push_back(Block(glm::vec3(i, j, k), Block::Type::AIR));
                 } else {
                     yVector.push_back(Block(glm::vec3(i, j, k), Block::Type::SOLID));
@@ -87,6 +87,9 @@ void World::createMesh() {
     for (int x = 0; x < sizeX; x++){
         for (int y = 0; y < sizeY; y++) {
             for (int z = 0; z < sizeZ; z++) {
+                if (this->blocks[x][y][z].type == Block::Type::AIR) {
+                    continue;
+                }
                 glm::vec3 &currentBlockPosition = this->blocks[x][y][z].position;
 
                 if (x+1 >= sizeX || this->blocks[x+1][y][z].type == Block::Type::AIR) {
