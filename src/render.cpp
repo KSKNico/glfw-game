@@ -5,7 +5,9 @@ Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(wi
 }
 
 std::string Renderer::loadShader(const std::string& name) {
-  std::ifstream ifs("../resources/shaders/" + name + ".glsl");
+  std::filesystem::path shaderPath = std::filesystem::path("../resources/shaders/");
+  shaderPath += name + ".glsl";
+  std::ifstream ifs( shaderPath.c_str());
   std::string text((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()) );
   return text;
 }
