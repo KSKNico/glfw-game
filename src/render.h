@@ -19,7 +19,7 @@
 #include "camera.h"
 #include "world.h"
 
-#include <stb_image.h>
+#include "stb_image.h"
 
 class Renderer {
     public:
