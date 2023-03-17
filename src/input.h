@@ -22,4 +22,10 @@ namespace input {
     extern Renderer* renderer;
     extern double oldMouseX;
     extern double oldMouseY;
+    extern bool isFullscreen;
+
+    extern int oldWidth;
+    extern int oldHeight;
+    extern int oldX;
+    extern int oldY;
 }
