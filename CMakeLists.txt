@@ -6,9 +6,6 @@ set(CMAKE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 
-list(APPEND CMAKE_PREFIX_PATH "E:/vcpkg/installed/x64-windows/share")
-list(APPEND CMAKE_PREFIX_PATH "E:/vcpkg/installed/x86-windows/share")
-
 
 # list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
