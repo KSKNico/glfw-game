@@ -2,14 +2,17 @@
 
 GLFWwindow* input::window; 
 Camera* input::camera;
+Renderer* input::renderer;
 double input::oldMouseX;
 double input::oldMouseY;
 
-void input::init(GLFWwindow* window, Camera* camera) {
+void input::init(GLFWwindow* window, Camera* camera, Renderer* renderer) {
     input::window = window;
     input::camera = camera;
+    input::renderer = renderer;
     glfwSetKeyCallback(window, input::keyCameraCallback);
     glfwSetCursorPosCallback(window, input::mouseCameraCallback);
+    glfwSetFramebufferSizeCallback(window, input::framebufferSizeCallback);
     input::oldMouseX = 0;
     input::oldMouseY = 0;
 }
@@ -47,4 +50,9 @@ void input::mouseCameraCallback(GLFWwindow* window, double mouseX, double mouseY
 
     input::camera->rotateCameraY((float) mouseDeltaX * -0.005f);
     input::camera->rotateCameraX((float) mouseDeltaY * -0.005f);
+}
+
+void input::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+    input::renderer->setPerspectiveMatrix(width, height);
+    glViewport(0, 0, width, height);
 }

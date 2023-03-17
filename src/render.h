@@ -27,6 +27,8 @@ class Renderer {
         void init();
         void render();
 
+        void setPerspectiveMatrix(int width, int height);
+
         /// @brief Reads shaderfile from ../resources/shaders/<name>.glsl
         /// @param name Name of the glsl file (without extension)
         /// @return Entire content of that file as an std::string

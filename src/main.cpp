@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    input::init(window, &camera);
+
 
     Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
 
@@ -55,7 +55,9 @@ int main(int argc, char* argv[]) {
     // world.populateWorld(30, 30, 30);
 
     Renderer renderer = Renderer(*window, camera, world);
- 
+    
+    input::init(window, &camera, &renderer);
+
     double lastTime = glfwGetTime();
     int nbFrames = 0;
 

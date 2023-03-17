@@ -8,15 +8,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "camera.h"
+#include "render.h"
 
 
 namespace input {
     void keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void mouseCameraCallback(GLFWwindow* window, double xpos, double ypos);
-    void init(GLFWwindow* window, Camera* camera);
+    void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+    void init(GLFWwindow* window, Camera* camera, Renderer* renderer);
 
     extern GLFWwindow* window; 
     extern Camera* camera;
+    extern Renderer* renderer;
     extern double oldMouseX;
     extern double oldMouseY;
 }

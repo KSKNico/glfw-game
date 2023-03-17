@@ -4,6 +4,13 @@ Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(wi
   perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
 }
 
+void Renderer::setPerspectiveMatrix(int width, int height) {
+  if (height == 0) {
+    height = 1;
+  }
+  perspectiveMatrix = glm::perspective(45.0f, (float) width / height, 0.1f, 1000.f);
+}
+
 std::string Renderer::loadShader(const std::string& name) {
   std::filesystem::path shaderPath = std::filesystem::path("../resources/shaders/");
   shaderPath += name + ".glsl";
