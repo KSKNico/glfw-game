@@ -3,6 +3,7 @@ project(glfw-game VERSION 0.1.0)
 
 set(CMAKE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
+set (CMAKE_CXX_FLAGS "-static-libstdc++ -std=c++17")
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 
