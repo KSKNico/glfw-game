@@ -22,7 +22,7 @@ class World {
         std::vector<std::shared_ptr<Block>> visibleBlocks;
         std::vector<glm::vec3> vertexPositions;
         std::vector<glm::vec3> vertexColors;
-        std::vector<glm::vec2> textureCoordinates;
+        std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;
 
         /// @brief For the position of a block returns true when that block is only surrounded by blocks that are solid
         /// @param position Position of the that block

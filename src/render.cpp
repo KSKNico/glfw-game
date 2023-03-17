@@ -124,9 +124,9 @@ void Renderer::init() {
     textureCoordinatesBuffer = 0;
     glGenBuffers(1, &textureCoordinatesBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 2 * world.textureCoordinates.size() * sizeof(GLfloat), &world.textureCoordinates[0][0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 2 * world.textureCoordinates.size() * sizeof(GLubyte), &world.textureCoordinates[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 0, NULL);
 
     texture = 0;
 
