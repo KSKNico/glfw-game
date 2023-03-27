@@ -20,6 +20,7 @@ std::string Renderer::loadShader(const std::string& name) {
 }
 
 
+//TODO: Needs rework with new chunk system
 void Renderer::init() {
     // createGeometry();
 

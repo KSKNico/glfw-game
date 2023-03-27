@@ -24,6 +24,7 @@ add_executable(
   src/input.cpp
   src/world.cpp
   src/player.cpp
+  src/chunk.cpp
   src/std_image.cpp
   src/jsoncpp.cpp)
 

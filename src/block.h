@@ -15,6 +15,8 @@ class Block {
         };
 
         Block(glm::vec3 position, Type type = Type::AIR);
+
+        // global position of block in world
         glm::vec3 position;
         glm::mat3 points;
         glm::mat3 colors;

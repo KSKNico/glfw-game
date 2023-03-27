@@ -1,78 +1,46 @@
-#include "world.h"
+#include "chunk.h"
 
-
-World::World(unsigned int renderDistance, Player &player) : renderDistance(renderDistance), player(player) {
-    std::random_device rd; // obtain a random number from hardware
-    std::mt19937 gen(rd()); // seed the generator
-    std::uniform_int_distribution<> distr(0, 9);
-
-    chunks = std::map<glm::ivec3, Chunk>();
-
-    for (unsigned int x = 0; x < renderDistance; ++x) {
-        for (unsigned int y = 0; y < renderDistance; ++y) {
-            for (unsigned int z = 0; z < renderDistance; ++z) {
-                chunks;
-            }
-        }
+/* bool Chunk::isHidden(const glm::uvec3 &position) const {
+    assert(position[0] < CHUNK_SIZE && position[1] < CHUNK_SIZE && position[2] < CHUNK_SIZE);
+    if (position[0] == Chunk::CHUNK_SIZE-1 || position[0] == 0 || position[1] == Chunk::CHUNK_SIZE-1 || position[1] == 0 || position[2] == Chunk::CHUNK_SIZE-1 || position[2] == 0) {
+        return false;
+    } else if (
+        blocks[position[0]+1][position[1]][position[2]].isSolid()
+        &&
+        blocks[position[0]-1][position[1]][position[2]].isSolid()
+        &&
+        blocks[position[0]][position[1]+1][position[2]].isSolid()
+        &&
+        blocks[position[0]][position[1]-1][position[2]].isSolid()
+        &&
+        blocks[position[0]][position[1]][position[2]+1].isSolid()
+        &&
+        blocks[position[0]][position[1]][position[2]-1].isSolid()
+    ) {
+        return true;
+    } else {
+        return false;
     }
-
-    // this->blocks = std::vector<std::vector<std::vector<Block>>>();
-
-    /*
-    for (int i = 0; i < sizeX; i++){
-        std::vector<std::vector<Block>> xVector = std::vector<std::vector<Block>>();
-        for (int j = 0; j < sizeY; j++) {
-            std::vector<Block> yVector = std::vector<Block>();
-            for (int k = 0; k < sizeZ; k++) {
-                int randomNumber = distr(gen);
-                if (randomNumber >= 5) {
-                    yVector.push_back(Block(glm::vec3(i, j, k), Block::Type::AIR));
-                } else {
-                    yVector.push_back(Block(glm::vec3(i, j, k), Block::Type::SOLID));
-                }
-            }
-            xVector.push_back(yVector);
-        }
-        this->blocks.push_back(xVector);
-    }
-
-    
-    // steps over all blocks and determines visibility
-    for (int i = 0; i < sizeX; i++){
-        for (int j = 0; j < sizeY; j++) {
-            for (int k = 0; k < sizeZ; k++) {
-                this->blocks[i][j][k].hidden = isHidden(glm::vec3(i, j, k));
-            }
-        }
-    }
-
-    // creates a vector with pointers to all visible blocks
-    visibleBlocks = std::vector<std::shared_ptr<Block>>();
-    for (int i = 0; i < sizeX; i++){
-        for (int j = 0; j < sizeY; j++) {
-            for (int k = 0; k < sizeZ; k++) {
-                if (!this->blocks[i][j][k].hidden) {
-                    visibleBlocks.push_back(std::shared_ptr<Block>(&blocks[i][j][k]));
-                }
-            }
-        }
-    }   */
 }
 
-/* void World::createMesh() { 
+bool Chunk::isHidden(const Block &block) const {
+    return this->isHidden(block.position);
+}
+ */
+void Chunk::createMesh() {
     vertexPositions = std::vector<glm::vec3>();
     vertexColors = std::vector<glm::vec3>();
 
     // iterates over all blocks
-    for (int x = 0; x < sizeX; x++){
-        for (int y = 0; y < sizeY; y++) {
-            for (int z = 0; z < sizeZ; z++) {
+    for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
+        for (int y = 0; y < Chunk::CHUNK_SIZE; y++) {
+            for (int z = 0; z < Chunk::CHUNK_SIZE; z++) {
                 if (this->blocks[x][y][z].type == Block::Type::AIR) {
                     continue;
                 }
-                glm::vec3 &currentBlockPosition = this->blocks[x][y][z].position;
+                glm::vec3 currentBlockPosition(x, y, z);
 
-                if (x+1 >= sizeX || this->blocks[x+1][y][z].type == Block::Type::AIR) {
+                if (x+1 >= Chunk::CHUNK_SIZE || this->blocks[x+1][y][z].type == Block::Type::AIR) {
                     // right face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,0));
@@ -126,7 +94,7 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (z+1 >= sizeZ || this->blocks[x][y][z+1].type == Block::Type::AIR) {
+                if (z+1 >= Chunk::CHUNK_SIZE || this->blocks[x][y][z+1].type == Block::Type::AIR) {
                     // front face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,1));
@@ -180,7 +148,7 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (y+1 >= sizeY || this->blocks[x][y+1][z].type == Block::Type::AIR) {
+                if (y+1 >= Chunk::CHUNK_SIZE || this->blocks[x][y+1][z].type == Block::Type::AIR) {
                     // top face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,1,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,1,1));
@@ -236,5 +204,5 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
             }
         }
     }
+
 }
-*/
