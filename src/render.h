@@ -45,7 +45,6 @@ class Renderer {
         GLuint vertexBuffer;
         GLuint colorBuffer;
         GLuint textureCoordinatesBuffer;
-        GLuint indexBuffer;
         GLuint vao;
         GLuint texture;
         glm::mat4 perspectiveMatrix;
