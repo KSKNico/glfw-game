@@ -160,21 +160,6 @@ void Renderer::init() {
     }
 
     stbi_image_free(data);
-
-    // glUseProgram(shader);
-    // glUniform1i(glGetUniformLocation(shader, "ourTexture"), texture);
-
-
-    std::vector<GLuint> indices = std::vector<GLuint>();
-    for (GLuint i = 0; i < world.vertexPositions.size(); ++i) {
-      indices.push_back(i);
-    }
-
-    // buffer for index data
-    indexBuffer = 0;
-    glGenBuffers(1, &indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 }
 
 void Renderer::render() {
@@ -191,5 +176,5 @@ void Renderer::render() {
   glm::mat4 MVP = VP;
 
   glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-  glDrawElements(GL_TRIANGLES, world.vertexPositions.size(), GL_UNSIGNED_INT, 0);    
+  glDrawArrays(GL_TRIANGLES, 0, world.textureCoordinates.size());    
 }
