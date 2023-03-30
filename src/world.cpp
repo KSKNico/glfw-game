@@ -8,10 +8,13 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
 
     chunks = std::map<glm::ivec3, Chunk>();
 
-    for (unsigned int x = 0; x < renderDistance; ++x) {
-        for (unsigned int y = 0; y < renderDistance; ++y) {
-            for (unsigned int z = 0; z < renderDistance; ++z) {
-                chunks;
+    glm::ivec3 chunkPosition;
+    for (unsigned int x = -renderDistance+1; x < renderDistance; ++x) {
+        for (unsigned int y = -renderDistance+1; y < renderDistance; ++y) {
+            for (unsigned int z = -renderDistance+1; z < renderDistance; ++z) {
+                chunkPosition = ((glm::ivec3) (player.position/Chunk::CHUNK_SIZE)) + glm::ivec3(x, y, z);
+
+                chunks.insert(std::make_pair(chunkPosition, Chunk(chunkPosition)));
             }
         }
     }

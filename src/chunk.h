@@ -2,14 +2,22 @@
 
 #include "block.h"
 
+#include "glad.h"
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <array>
 #include <vector>
+#include <random>
 
 
 
 class Chunk {
     public:
         static constexpr int CHUNK_SIZE = 16;
+
+        int vao;
+
+        glm::ivec3 chunkPosition;
 
         std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
 
@@ -27,7 +35,9 @@ class Chunk {
         /// @return True if block is hidden, false otherwise
         // bool isHidden(const Block &block) const;
 
-        Chunk();
+        Chunk(const glm::ivec3 &chunkPosition)};
         void createMesh();
+
+        void createVAO();
 
 };

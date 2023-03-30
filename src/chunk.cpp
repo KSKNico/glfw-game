@@ -27,6 +27,41 @@ bool Chunk::isHidden(const Block &block) const {
     return this->isHidden(block.position);
 }
  */
+
+Chunk::Chunk(const glm::ivec3 &chunkPosition) : chunkPosition(chunkPosition) {
+    populateChunk();
+    createVAO();
+}
+
+void Chunk::populateChunk() {
+    static std::random_device rd; // obtain a random number from hardware
+    static std::mt19937 gen(rd()); // seed the generator
+    static std::uniform_int_distribution<> distr(0, 99);
+
+    gen.seed(chunkPosition[0] << 8 | chunkPosition[1] << 16 | chunkPosition[2] << 24);
+
+    for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
+        for (int y = 0; y < Chunk::CHUNK_SIZE; y++) {
+            for (int z = 0; z < Chunk::CHUNK_SIZE; z++) {
+                glm::vec<3, GLubyte, glm::highp_bvec3> blockPosition(chunkPosition + glm::vec3(x, y, z));
+
+                Block::Type blockType = Block::Type::AIR;
+                if (distr(gen) < 10) {
+                    blockType = Block::Type::SOLID;
+                }
+                blocks[x][y][z] = Block(blockPosition, blockType);
+                
+            }
+        }
+    }
+
+    distr(gen);
+
+}
+
+void Chunk::createVAO() {
+}
+
 void Chunk::createMesh() {
     vertexPositions = std::vector<glm::vec3>();
     vertexColors = std::vector<glm::vec3>();
