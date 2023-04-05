@@ -13,7 +13,7 @@
 
 class Chunk {
     public:
-        static constexpr int CHUNK_SIZE = 16;
+        static constexpr const int CHUNK_SIZE = 16;
 
         int vao;
 
@@ -35,9 +35,10 @@ class Chunk {
         /// @return True if block is hidden, false otherwise
         // bool isHidden(const Block &block) const;
 
-        Chunk(const glm::ivec3 &chunkPosition)};
+        Chunk(const glm::ivec3 &chunkPosition);
         void createMesh();
 
+        void populateChunk();
         void createVAO();
 
 };

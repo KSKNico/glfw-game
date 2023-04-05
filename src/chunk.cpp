@@ -40,10 +40,11 @@ void Chunk::populateChunk() {
 
     gen.seed(chunkPosition[0] << 8 | chunkPosition[1] << 16 | chunkPosition[2] << 24);
 
+    std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
         for (int y = 0; y < Chunk::CHUNK_SIZE; y++) {
             for (int z = 0; z < Chunk::CHUNK_SIZE; z++) {
-                glm::vec<3, GLubyte, glm::highp_bvec3> blockPosition(chunkPosition + glm::vec3(x, y, z));
+                glm::ivec3 blockPosition(chunkPosition * CHUNK_SIZE + glm::vec3(x, y, z));
 
                 Block::Type blockType = Block::Type::AIR;
                 if (distr(gen) < 10) {

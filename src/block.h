@@ -14,10 +14,11 @@ class Block {
             SOLID,
         };
 
-        Block(glm::vec<3, GLubyte, glm::highp_bvec3> position, Type type = Type::AIR);
+        Block(glm::ivec3 position, Type type = Type::AIR);
+        Block();
 
         // global position of block in world
-        glm::vec<3, GLubyte, glm::highp_bvec3>
+        glm::ivec3 position;
         glm::mat3 points;
         glm::mat3 colors;
         bool hidden;

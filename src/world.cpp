@@ -12,7 +12,7 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
     for (unsigned int x = -renderDistance+1; x < renderDistance; ++x) {
         for (unsigned int y = -renderDistance+1; y < renderDistance; ++y) {
             for (unsigned int z = -renderDistance+1; z < renderDistance; ++z) {
-                chunkPosition = ((glm::ivec3) (player.position/Chunk::CHUNK_SIZE)) + glm::ivec3(x, y, z);
+                chunkPosition = (glm::ivec3) (player.position * (float) (1/Chunk::CHUNK_SIZE)) + glm::ivec3(x, y, z);
 
                 chunks.insert(std::make_pair(chunkPosition, Chunk(chunkPosition)));
             }
