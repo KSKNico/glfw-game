@@ -19,8 +19,6 @@ class Block {
 
         // global position of block in world
         glm::ivec3 position;
-        glm::mat3 points;
-        glm::mat3 colors;
         bool hidden;
         Type type;
 
