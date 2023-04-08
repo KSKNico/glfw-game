@@ -6,13 +6,13 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
     std::mt19937 gen(rd()); // seed the generator
     std::uniform_int_distribution<> distr(0, 9);
 
-    chunks = std::map<glm::ivec3, Chunk>();
+    this->chunks = std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher>();
 
     glm::ivec3 chunkPosition;
-    for (unsigned int x = -renderDistance+1; x < renderDistance; ++x) {
-        for (unsigned int y = -renderDistance+1; y < renderDistance; ++y) {
-            for (unsigned int z = -renderDistance+1; z < renderDistance; ++z) {
-                chunkPosition = (glm::ivec3) (player.position * (float) (1/Chunk::CHUNK_SIZE)) + glm::ivec3(x, y, z);
+    for (int x = -renderDistance+1; x < (int) renderDistance; ++x) {
+        for (int y = -renderDistance+1; y < (int) renderDistance; ++y) {
+            for (int z = -renderDistance+1; z < (int) renderDistance; ++z) {
+                chunkPosition = ((glm::ivec3) (player.position * (float) (1/Chunk::CHUNK_SIZE))) + glm::ivec3(x, y, z);
 
                 chunks.insert(std::make_pair(chunkPosition, Chunk(chunkPosition)));
             }

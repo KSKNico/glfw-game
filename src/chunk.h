@@ -13,15 +13,17 @@
 
 class Chunk {
     public:
-        static constexpr const int CHUNK_SIZE = 16;
+        static constexpr const unsigned char CHUNK_SIZE = 16;
 
-        int vao;
+        GLuint vao;
+        GLuint vertexBuffer;
+        GLuint textureCoordinatesBuffer;
 
         glm::ivec3 chunkPosition;
 
         std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
 
-        std::vector<glm::vec3> vertexPositions;
+        std::vector<glm::vec<3, GLubyte, glm::packed_highp>> vertexPositions;
         std::vector<glm::vec3> vertexColors;
         std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;
 

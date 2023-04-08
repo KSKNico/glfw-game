@@ -30,6 +30,7 @@ bool Chunk::isHidden(const Block &block) const {
 
 Chunk::Chunk(const glm::ivec3 &chunkPosition) : chunkPosition(chunkPosition) {
     populateChunk();
+    createMesh();
     createVAO();
 }
 
@@ -40,32 +41,45 @@ void Chunk::populateChunk() {
 
     gen.seed(chunkPosition[0] << 8 | chunkPosition[1] << 16 | chunkPosition[2] << 24);
 
-    std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
+    // std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> this->blocks;
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
         for (int y = 0; y < Chunk::CHUNK_SIZE; y++) {
             for (int z = 0; z < Chunk::CHUNK_SIZE; z++) {
-                glm::ivec3 blockPosition(chunkPosition * CHUNK_SIZE + glm::vec3(x, y, z));
+                glm::ivec3 blockPosition(chunkPosition * (int) CHUNK_SIZE + glm::ivec3(x, y, z));
 
                 Block::Type blockType = Block::Type::AIR;
                 if (distr(gen) < 10) {
                     blockType = Block::Type::SOLID;
                 }
-                blocks[x][y][z] = Block(blockPosition, blockType);
+                blocks[x][y][z].type = blockType;
+                blocks[x][y][z].position = blockPosition;
                 
             }
         }
     }
-
-    distr(gen);
-
 }
 
 void Chunk::createVAO() {
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 3 * vertexPositions.size() * sizeof(GLbyte), &vertexPositions[0][0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 0, NULL);
+
+    glGenBuffers(1, &textureCoordinatesBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 2 * textureCoordinates.size() * sizeof(GLbyte), &textureCoordinates[0][0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 0, NULL);
 }
 
 void Chunk::createMesh() {
-    vertexPositions = std::vector<glm::vec3>();
-    vertexColors = std::vector<glm::vec3>();
+    this->vertexPositions = std::vector<glm::vec<3, GLubyte, glm::packed_highp>>();
+    this->vertexColors = std::vector<glm::vec3>();
+    this->textureCoordinates = std::vector<glm::vec<2, GLubyte, glm::packed_highp>>();
 
     // iterates over all blocks
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){

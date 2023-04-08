@@ -24,7 +24,7 @@ std::string Renderer::loadShader(const std::string& name) {
 void Renderer::init() {
     // createGeometry();
 
-    world.createMesh();
+    // world.createMesh();
 
     const std::string vertex_shader_text = Renderer::loadShader("vertex_shader");
     const std::string fragment_shader_text = Renderer::loadShader("fragment_shader");
@@ -108,11 +108,11 @@ void Renderer::init() {
 
 
     // init vertex array object
-    vao = 0;
+/*     vao = 0;
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glBindVertexArray(vao); */
 
-    // buffer for vertex data
+/*     // buffer for vertex data
     vertexBuffer = 0;
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -134,7 +134,7 @@ void Renderer::init() {
     glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
     glBufferData(GL_ARRAY_BUFFER, 2 * world.textureCoordinates.size() * sizeof(GLubyte), &world.textureCoordinates[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 0, NULL); */
 
     texture = 0;
 
@@ -165,16 +165,22 @@ void Renderer::init() {
 void Renderer::render() {
 
 
-  glBindTexture(GL_TEXTURE_2D, texture);
-
   glUseProgram(shader);
-  glBindVertexArray(vao);
 
   GLint uniformMVP = glGetUniformLocation(shader, "MVP");
 
   glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
-  glm::mat4 MVP = VP;
 
-  glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-  glDrawArrays(GL_TRIANGLES, 0, world.textureCoordinates.size());    
+  for (auto& chunkPair : world.chunks)
+  {
+    glBindVertexArray(chunkPair.second.vao);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glm::mat4 translationMatrix = glm::translate(chunkPair.second.chunkPosition * (int) Chunk::CHUNK_SIZE);
+
+    glm::mat4 MVP = VP * translationMatrix;
+
+    glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
+    glDrawArrays(GL_TRIANGLES, 0, chunkPair.second.vertexPositions.size());   
+  }
 }

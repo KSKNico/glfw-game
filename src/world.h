@@ -3,11 +3,12 @@
 #include "block.h"
 #include "player.h"
 #include "chunk.h"
+#include "util.h"
 
 #include <vector>
 #include <memory>
 #include <random>
-#include <map>
+#include <unordered_map>
 #include <iostream>
 #include <glm/matrix.hpp>
 
@@ -26,7 +27,7 @@ class World {
         std::vector<glm::vec3> vertexColors;
         std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;
         */
-        std::map<glm::ivec3, Chunk> chunks;
+        std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher> chunks;
 
         // void createMesh();
 
