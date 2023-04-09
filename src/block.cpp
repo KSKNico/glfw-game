@@ -2,7 +2,11 @@
 
 
 
-Block::Block(glm::vec3 position, Type type) : position(position), type(type) {
+Block::Block(glm::ivec3 position, Type type) : position(position), type(type) {
+}
+
+Block::Block() {
+    Block(glm::ivec3 (0,0,0), Type::AIR);
 }
 
 bool Block::isSolid() const {
