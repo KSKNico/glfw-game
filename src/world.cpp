@@ -14,10 +14,22 @@ World::World(unsigned int renderDistance, Player &player) : renderDistance(rende
             for (int z = -renderDistance+1; z < (int) renderDistance; ++z) {
                 chunkPosition = ((glm::ivec3) (player.position * (float) (1/Chunk::CHUNK_SIZE))) + glm::ivec3(x, y, z);
 
-                chunks.insert(std::make_pair(chunkPosition, Chunk(chunkPosition)));
+                chunks.insert(std::make_pair(chunkPosition, Chunk(chunkPosition, this->chunks)));
             }
         }
     }
+
+    // populate all chunks
+    for (auto &chunk : chunks) {
+        chunk.second.populateChunk();
+    }
+
+    // create mesh and VAO for all chunks
+    for (auto &chunk : chunks) {
+        chunk.second.createMesh();
+        chunk.second.createVAO();
+    }
+
 
     // this->blocks = std::vector<std::vector<std::vector<Block>>>();
 

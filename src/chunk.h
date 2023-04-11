@@ -1,6 +1,7 @@
 #pragma once
 
 #include "block.h"
+#include "util.h"
 
 #include "glad.h"
 #define GLFW_INCLUDE_NONE
@@ -8,6 +9,7 @@
 #include <array>
 #include <vector>
 #include <random>
+#include <unordered_map>
 
 
 
@@ -20,6 +22,8 @@ class Chunk {
         GLuint textureCoordinatesBuffer;
 
         glm::ivec3 chunkPosition;
+
+        std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher>& chunks;
 
         std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
 
@@ -37,7 +41,7 @@ class Chunk {
         /// @return True if block is hidden, false otherwise
         // bool isHidden(const Block &block) const;
 
-        Chunk(const glm::ivec3 &chunkPosition);
+        Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher> &chunks);
         void createMesh();
 
         void populateChunk();

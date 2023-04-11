@@ -28,11 +28,8 @@ bool Chunk::isHidden(const Block &block) const {
 }
  */
 
-Chunk::Chunk(const glm::ivec3 &chunkPosition) : chunkPosition(chunkPosition) {
-    populateChunk();
-    createMesh();
-    createVAO();
-}
+Chunk::Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher> &chunks) : chunkPosition(chunkPosition), chunks(chunks) {}
+
 
 void Chunk::populateChunk() {
     static std::random_device rd; // obtain a random number from hardware
@@ -48,7 +45,7 @@ void Chunk::populateChunk() {
                 glm::ivec3 blockPosition(chunkPosition * (int) CHUNK_SIZE + glm::ivec3(x, y, z));
 
                 Block::Type blockType = Block::Type::AIR;
-                if (distr(gen) < 10) {
+                if (distr(gen) != -1) {
                     blockType = Block::Type::SOLID;
                 }
                 blocks[x][y][z].type = blockType;
@@ -90,7 +87,12 @@ void Chunk::createMesh() {
                 }
                 glm::vec3 currentBlockPosition(x, y, z);
 
-                if (x+1 >= Chunk::CHUNK_SIZE || this->blocks[x+1][y][z].type == Block::Type::AIR) {
+                if (
+                (x < Chunk::CHUNK_SIZE-1 &&
+                this->blocks[x+1][y][z].type == Block::Type::AIR) || 
+                (x == Chunk::CHUNK_SIZE-1 && chunks.find(chunkPosition + glm::ivec3(1, 0, 0)) == chunks.end()) ||
+                (x == Chunk::CHUNK_SIZE-1 && chunks.find(chunkPosition + glm::ivec3(1, 0, 0)) != chunks.end() && chunks.at(chunkPosition + glm::ivec3(1, 0, 0)).blocks[0][y][z].type == Block::Type::AIR)
+                ) {
                     // right face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,0));
@@ -117,7 +119,11 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (x-1 < 0 || this->blocks[x-1][y][z].type == Block::Type::AIR) {
+                if ((x > 0 &&
+                this->blocks[x-1][y][z].type == Block::Type::AIR) || 
+                (x == 0 && chunks.find(chunkPosition + glm::ivec3(-1, 0, 0)) == chunks.end()) ||
+                (x == 0 && chunks.find(chunkPosition + glm::ivec3(-1, 0, 0)) != chunks.end() && chunks.at(chunkPosition + glm::ivec3(-1, 0, 0)).blocks[Chunk::CHUNK_SIZE-1][y][z].type == Block::Type::AIR)
+                ) {
                     // left face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,0));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,1));
@@ -144,7 +150,11 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (z+1 >= Chunk::CHUNK_SIZE || this->blocks[x][y][z+1].type == Block::Type::AIR) {
+                if ((z < Chunk::CHUNK_SIZE-1 &&
+                this->blocks[x][y][z+1].type == Block::Type::AIR) || 
+                (z == Chunk::CHUNK_SIZE-1 && chunks.find(chunkPosition + glm::ivec3(0, 0, 1)) == chunks.end()) ||
+                (z == Chunk::CHUNK_SIZE-1 && chunks.find(chunkPosition + glm::ivec3(0, 0, 1)) != chunks.end() && chunks.at(chunkPosition + glm::ivec3(0, 0, 1)).blocks[x][y][0].type == Block::Type::AIR)
+                ) {
                     // front face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,1));
@@ -171,7 +181,11 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (z-1 < 0 || this->blocks[x][y][z-1].type == Block::Type::AIR) {
+                if ((z > 0 &&
+                this->blocks[x][y][z-1].type == Block::Type::AIR) || 
+                (z == 0 && chunks.find(chunkPosition + glm::ivec3(0, 0, -1)) == chunks.end()) ||
+                (z == 0 && chunks.find(chunkPosition + glm::ivec3(0, 0, -1)) != chunks.end() && chunks.at(chunkPosition + glm::ivec3(0, 0, -1)).blocks[x][y][Chunk::CHUNK_SIZE-1].type == Block::Type::AIR)
+                ) {
                     // back face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,0));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,0));
@@ -198,7 +212,11 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (y+1 >= Chunk::CHUNK_SIZE || this->blocks[x][y+1][z].type == Block::Type::AIR) {
+                if ((y < Chunk::CHUNK_SIZE-1 &&
+                this->blocks[x][y+1][z].type == Block::Type::AIR) || 
+                (y == Chunk::CHUNK_SIZE-1 && chunks.find(chunkPosition + glm::ivec3(0, 1, 0)) == chunks.end()) ||
+                (y == Chunk::CHUNK_SIZE-1 && chunks.find(chunkPosition + glm::ivec3(0, 1, 0)) != chunks.end() && chunks.at(chunkPosition + glm::ivec3(0, 1, 0)).blocks[x][0][z].type == Block::Type::AIR)
+                ) {
                     // top face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,1,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,1,1));
@@ -225,7 +243,11 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(1, 0));
                 }
 
-                if (y-1 < 0 || this->blocks[x][y-1][z].type == Block::Type::AIR) {
+                if ((y > 0 &&
+                this->blocks[x][y-1][z].type == Block::Type::AIR) || 
+                (y == 0 && chunks.find(chunkPosition + glm::ivec3(0, -1, 0)) == chunks.end()) ||
+                (y == 0 && chunks.find(chunkPosition + glm::ivec3(0, -1, 0)) != chunks.end() && chunks.at(chunkPosition + glm::ivec3(0, -1, 0)).blocks[x][Chunk::CHUNK_SIZE-1][z].type == Block::Type::AIR)
+                ) {
                     // bottom face
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,1));
