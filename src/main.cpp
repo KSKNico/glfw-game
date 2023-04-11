@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     glEnable(GL_CULL_FACE);
 
 
-    Camera camera = Camera(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Camera camera = Camera(glm::vec3(0, 0, 0), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
 
