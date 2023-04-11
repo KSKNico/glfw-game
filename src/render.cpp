@@ -11,13 +11,6 @@ void Renderer::setPerspectiveMatrix(int width, int height) {
   perspectiveMatrix = glm::perspective(45.0f, (float) width / height, 0.1f, 1000.f);
 }
 
-std::string Renderer::loadShader(const std::string& name) {
-  std::filesystem::path shaderPath = std::filesystem::path("../resources/shaders/");
-  shaderPath += name + ".glsl";
-  std::ifstream ifs( shaderPath.c_str());
-  std::string text((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()) );
-  return text;
-}
 
 
 //TODO: Needs rework with new chunk system
@@ -26,8 +19,8 @@ void Renderer::init() {
 
     // world.createMesh();
 
-    const std::string vertex_shader_text = Renderer::loadShader("vertex_shader");
-    const std::string fragment_shader_text = Renderer::loadShader("fragment_shader");
+    const std::string vertex_shader_text = loadShader("vertex_shader");
+    const std::string fragment_shader_text = loadShader("fragment_shader");
     const GLchar* source;
     GLint isCompiled;
 

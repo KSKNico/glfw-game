@@ -7,3 +7,11 @@ std::size_t IntegerVec3Hasher::operator()(const glm::ivec3& k) const {
         ^ (std::hash<int>()(k[2]) << 1)
     );
 }
+
+std::string loadShader(const std::string& name) {
+  std::filesystem::path shaderPath = std::filesystem::path("../resources/shaders/");
+  shaderPath += name + ".glsl";
+  std::ifstream ifs( shaderPath.c_str());
+  std::string text((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()) );
+  return text;
+}

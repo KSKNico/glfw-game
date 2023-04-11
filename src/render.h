@@ -10,8 +10,6 @@
 #include <memory>
 #include <iostream>
 #include <string>
-#include <fstream>
-#include <filesystem>
 #include <glm/matrix.hpp>
 
 
@@ -29,10 +27,7 @@ class Renderer {
 
         void setPerspectiveMatrix(int width, int height);
 
-        /// @brief Reads shaderfile from ../resources/shaders/<name>.glsl
-        /// @param name Name of the glsl file (without extension)
-        /// @return Entire content of that file as an std::string
-        static std::string loadShader(const std::string &name);
+ 
 
     private:
         GLFWwindow& window;
