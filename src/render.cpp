@@ -12,13 +12,7 @@ void Renderer::setPerspectiveMatrix(int width, int height) {
 }
 
 
-
-//TODO: Needs rework with new chunk system
 void Renderer::init() {
-    // createGeometry();
-
-    // world.createMesh();
-
     const std::string vertex_shader_text = loadShader("vertex_shader");
     const std::string fragment_shader_text = loadShader("fragment_shader");
     const GLchar* source;
@@ -97,37 +91,6 @@ void Renderer::init() {
 
 
     }
-
-
-
-    // init vertex array object
-/*     vao = 0;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao); */
-
-/*     // buffer for vertex data
-    vertexBuffer = 0;
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 3 * world.vertexPositions.size() * sizeof(GLfloat), &world.vertexPositions[0][0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-    // buffer for color data
-    colorBuffer = 0;
-    glGenBuffers(1, &colorBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 3 * world.vertexColors.size() * sizeof(GLfloat), &world.vertexColors[0][0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-    // buffer for texture coordiantes
-    textureCoordinatesBuffer = 0;
-    glGenBuffers(1, &textureCoordinatesBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 2 * world.textureCoordinates.size() * sizeof(GLubyte), &world.textureCoordinates[0][0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 0, NULL); */
 
     texture = 0;
 

@@ -8,17 +8,6 @@ World::World(unsigned int renderDistance, Player &player, Camera &camera) : rend
     this->chunks = std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>();
 
     this->loadChunks();
-
-    /*     // populate all chunks
-        for (auto &chunk : chunks) {
-            chunk.second.populateChunk();
-        }
-
-        // create mesh and VAO for all chunks
-        for (auto &chunk : chunks) {
-            chunk.second.createMesh();
-            chunk.second.createVAO();
-        } */
 }
 
 void World::unloadChunks() {

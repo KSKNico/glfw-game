@@ -1,34 +1,6 @@
 #include "chunk.h"
 #include <iostream>
 
-/* bool Chunk::isHidden(const glm::uvec3 &position) const {
-    assert(position[0] < CHUNK_SIZE && position[1] < CHUNK_SIZE && position[2] < CHUNK_SIZE);
-    if (position[0] == Chunk::CHUNK_SIZE-1 || position[0] == 0 || position[1] == Chunk::CHUNK_SIZE-1 || position[1] == 0 || position[2] == Chunk::CHUNK_SIZE-1 || position[2] == 0) {
-        return false;
-    } else if (
-        blocks[position[0]+1][position[1]][position[2]].isSolid()
-        &&
-        blocks[position[0]-1][position[1]][position[2]].isSolid()
-        &&
-        blocks[position[0]][position[1]+1][position[2]].isSolid()
-        &&
-        blocks[position[0]][position[1]-1][position[2]].isSolid()
-        &&
-        blocks[position[0]][position[1]][position[2]+1].isSolid()
-        &&
-        blocks[position[0]][position[1]][position[2]-1].isSolid()
-    ) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool Chunk::isHidden(const Block &block) const {
-    return this->isHidden(block.position);
-}
- */
-
 Chunk::Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks) : chunkPosition(chunkPosition), chunks(chunks) {
     std::cout << "Created chunk at position " << chunkPosition[0] << " " << chunkPosition[1] << " " << chunkPosition[2] << std::endl;
     this->populateChunk();
