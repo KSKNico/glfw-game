@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 
     Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
 
-    World world = World(2, player);
+    World world = World(2, player, camera);
     // world.populateWorld(30, 30, 30);
 
     Renderer renderer = Renderer(*window, camera, world);
@@ -79,9 +79,7 @@ int main(int argc, char* argv[]) {
         }
 
 
-        // moves the camera
-        // timer += 1;
-        // camera.position += glm::vec3(0.0f, 0.001f, 0.0001f);
+        world.update();
 
         // update other events like input handling 
         glfwPollEvents();

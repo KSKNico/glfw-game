@@ -10,6 +10,7 @@
 #include <vector>
 #include <random>
 #include <unordered_map>
+#include <memory>
 
 
 
@@ -23,7 +24,7 @@ class Chunk {
 
         glm::ivec3 chunkPosition;
 
-        std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher>& chunks;
+        std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>& chunks;
 
         std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
 
@@ -41,7 +42,13 @@ class Chunk {
         /// @return True if block is hidden, false otherwise
         // bool isHidden(const Block &block) const;
 
-        Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher> &chunks);
+        Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks);
+        ~Chunk();
+
+        Chunk(const Chunk&) = delete;
+        Chunk(Chunk&&) = default;
+        Chunk& operator=(const Chunk&) = delete;
+
         void createMesh();
 
         void populateChunk();

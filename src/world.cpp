@@ -1,32 +1,63 @@
 #include "world.h"
 
-
-World::World(unsigned int renderDistance, Player &player) : renderDistance(renderDistance), player(player) {
-    std::random_device rd; // obtain a random number from hardware
+World::World(unsigned int renderDistance, Player &player, Camera &camera) : renderDistance(renderDistance), player(player), camera(camera) {
+    std::random_device rd;  // obtain a random number from hardware
     std::mt19937 gen(rd()); // seed the generator
     std::uniform_int_distribution<> distr(0, 9);
 
-    this->chunks = std::unordered_map<glm::ivec3, Chunk, IntegerVec3Hasher>();
+    this->chunks = std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>();
 
+    this->loadChunks();
+
+    /*     // populate all chunks
+        for (auto &chunk : chunks) {
+            chunk.second.populateChunk();
+        }
+
+        // create mesh and VAO for all chunks
+        for (auto &chunk : chunks) {
+            chunk.second.createMesh();
+            chunk.second.createVAO();
+        } */
+}
+
+void World::unloadChunks() {
+    auto itr = chunks.begin();
+    glm::ivec3 currentChunk = convertToChunkCoordinates(camera.position);  
+    while (itr != chunks.end()) {
+        if (itr->first.x < currentChunk.x - (int) renderDistance || itr->first.x > currentChunk.x + (int) renderDistance ||
+            itr->first.y < currentChunk.y - (int) renderDistance || itr->first.y > currentChunk.y + (int) renderDistance ||
+            itr->first.z < currentChunk.z - (int) renderDistance || itr->first.z > currentChunk.z + (int) renderDistance) {
+            itr = chunks.erase(itr);
+        } else {
+            ++itr;
+        }
+    }
+}
+
+void World::loadChunks() {
     glm::ivec3 chunkPosition;
-    for (int x = -renderDistance+1; x < (int) renderDistance; ++x) {
-        for (int y = -renderDistance+1; y < (int) renderDistance; ++y) {
-            for (int z = -renderDistance+1; z < (int) renderDistance; ++z) {
-                chunkPosition = ((glm::ivec3) (player.position * (float) (1/Chunk::CHUNK_SIZE))) + glm::ivec3(x, y, z);
+    for (int x = -renderDistance; x <= (int)renderDistance; ++x) {
+        for (int y = -renderDistance; y <= (int)renderDistance; ++y) {
+            for (int z = -renderDistance; z <= (int)renderDistance; ++z) {
+                glm::ivec3 clampedCoordinates = World::convertToChunkCoordinates(camera.position);
+                chunkPosition = clampedCoordinates + glm::ivec3(x, y, z);
 
-                chunks.insert(std::make_pair(chunkPosition, Chunk(chunkPosition, this->chunks)));
+                if (chunks.find(chunkPosition) == chunks.end()) {
+                    // std::unique_ptr<Chunk> chunk = std::make_unique<Chunk> (Chunk(chunkPosition, this->chunks));
+                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(chunkPosition, this->chunks);
+                    chunks.emplace(std::make_pair(chunkPosition, std::move(chunk)));
+                }
             }
         }
     }
+}
 
-    // populate all chunks
-    for (auto &chunk : chunks) {
-        chunk.second.populateChunk();
-    }
+void World::update() {
+    this->unloadChunks();
+    this->loadChunks();
+}
 
-    // create mesh and VAO for all chunks
-    for (auto &chunk : chunks) {
-        chunk.second.createMesh();
-        chunk.second.createVAO();
-    }
+glm::ivec3 World::convertToChunkCoordinates(const glm::vec3 &coordinates) {
+    return glm::ivec3(std::floor(coordinates.x / Chunk::CHUNK_SIZE), std::floor(coordinates.y / Chunk::CHUNK_SIZE), std::floor(coordinates.z / Chunk::CHUNK_SIZE));
 }

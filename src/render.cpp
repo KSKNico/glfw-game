@@ -166,14 +166,14 @@ void Renderer::render() {
 
   for (auto& chunkPair : world.chunks)
   {
-    glBindVertexArray(chunkPair.second.vao);
+    glBindVertexArray(chunkPair.second->vao);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    glm::mat4 translationMatrix = glm::translate(chunkPair.second.chunkPosition * (int) Chunk::CHUNK_SIZE);
+    glm::mat4 translationMatrix = glm::translate(chunkPair.second->chunkPosition * (int) Chunk::CHUNK_SIZE);
 
     glm::mat4 MVP = VP * translationMatrix;
 
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-    glDrawArrays(GL_TRIANGLES, 0, chunkPair.second.vertexPositions.size());   
+    glDrawArrays(GL_TRIANGLES, 0, chunkPair.second->vertexPositions.size());   
   }
 }
