@@ -45,7 +45,7 @@ void Chunk::populateChunk() {
                 glm::ivec3 blockPosition(chunkPosition * (int) CHUNK_SIZE + glm::ivec3(x, y, z));
 
                 Block::Type blockType = Block::Type::AIR;
-                if (distr(gen) != -1) {
+                if (distr(gen) < 5) {
                     blockType = Block::Type::SOLID;
                 }
                 blocks[x][y][z].type = blockType;
