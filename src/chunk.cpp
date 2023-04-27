@@ -14,6 +14,7 @@ Chunk::~Chunk() {
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vertexBuffer);
     glDeleteBuffers(1, &textureCoordinatesBuffer);
+    glDeleteBuffers(1, &vertexFacingBuffer);
 }
 
 void Chunk::populateChunk() {
@@ -47,21 +48,28 @@ void Chunk::createVAO() {
 
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 3 * vertexPositions.size() * sizeof(GLbyte), &vertexPositions[0][0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3 * vertexPositions.size() * sizeof(GLubyte), &vertexPositions[0][0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
 
     glGenBuffers(1, &textureCoordinatesBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 2 * textureCoordinates.size() * sizeof(GLbyte), &textureCoordinates[0][0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 2 * textureCoordinates.size() * sizeof(GLubyte), &textureCoordinates[0][0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
+
+    glGenBuffers(1, &vertexFacingBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexFacingBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertexFacing.size() * sizeof(GLubyte), &vertexFacing[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 0, NULL);
+    glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
 }
 
 void Chunk::createMesh() {
     this->vertexPositions = std::vector<glm::vec<3, GLubyte, glm::packed_highp>>();
     this->vertexColors = std::vector<glm::vec3>();
     this->textureCoordinates = std::vector<glm::vec<2, GLubyte, glm::packed_highp>>();
+    this->vertexFacing = std::vector<GLubyte>();
 
     // iterates over all blocks
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
@@ -87,13 +95,13 @@ void Chunk::createMesh() {
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,0));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,1,0));
 
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                     textureCoordinates.push_back(glm::vec2(0, 1));
                     textureCoordinates.push_back(glm::vec2(1, 1));
@@ -102,6 +110,14 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(0, 0));
                     textureCoordinates.push_back(glm::vec2(1, 1));
                     textureCoordinates.push_back(glm::vec2(1, 0));
+
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
+
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
                 }
 
                 if ((x > 0 &&
@@ -118,13 +134,13 @@ void Chunk::createMesh() {
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,1,1));
 
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                     textureCoordinates.push_back(glm::vec2(0, 1));
                     textureCoordinates.push_back(glm::vec2(1, 1));
@@ -133,6 +149,14 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(0, 0));
                     textureCoordinates.push_back(glm::vec2(1, 1));
                     textureCoordinates.push_back(glm::vec2(1, 0));
+
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
+
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
+                    vertexFacing.push_back(0);
                 }
 
                 if ((z < Chunk::CHUNK_SIZE-1 &&
@@ -149,13 +173,13 @@ void Chunk::createMesh() {
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,1,1));
 
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                     textureCoordinates.push_back(glm::vec2(0, 1));
                     textureCoordinates.push_back(glm::vec2(1, 1));
@@ -164,6 +188,14 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(0, 0));
                     textureCoordinates.push_back(glm::vec2(1, 1));
                     textureCoordinates.push_back(glm::vec2(1, 0));
+
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
+
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
                 }
 
                 if ((z > 0 &&
@@ -180,13 +212,13 @@ void Chunk::createMesh() {
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,0));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,1,0));
 
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                     textureCoordinates.push_back(glm::vec2(0, 1));
                     textureCoordinates.push_back(glm::vec2(1, 1));
@@ -195,6 +227,14 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(0, 0));
                     textureCoordinates.push_back(glm::vec2(1, 1));
                     textureCoordinates.push_back(glm::vec2(1, 0));
+
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
+
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
+                    vertexFacing.push_back(2);
                 }
 
                 if ((y < Chunk::CHUNK_SIZE-1 &&
@@ -211,13 +251,13 @@ void Chunk::createMesh() {
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,1,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(1,1,0));
 
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                     textureCoordinates.push_back(glm::vec2(0, 1));
                     textureCoordinates.push_back(glm::vec2(1, 1));
@@ -226,6 +266,14 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(0, 0));
                     textureCoordinates.push_back(glm::vec2(1, 1));
                     textureCoordinates.push_back(glm::vec2(1, 0));
+
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
+
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
                 }
 
                 if ((y > 0 &&
@@ -242,13 +290,13 @@ void Chunk::createMesh() {
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,1));
                     vertexPositions.push_back(currentBlockPosition+glm::vec3(0,0,0));
 
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
                     vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
                     vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                     textureCoordinates.push_back(glm::vec2(0, 1));
                     textureCoordinates.push_back(glm::vec2(1, 1));
@@ -257,6 +305,14 @@ void Chunk::createMesh() {
                     textureCoordinates.push_back(glm::vec2(0, 0));
                     textureCoordinates.push_back(glm::vec2(1, 1));
                     textureCoordinates.push_back(glm::vec2(1, 0));
+
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
+
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
+                    vertexFacing.push_back(1);
                 }
             }
         }

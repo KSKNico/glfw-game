@@ -13,8 +13,8 @@ void Renderer::setPerspectiveMatrix(int width, int height) {
 
 
 void Renderer::init() {
-    const std::string vertex_shader_text = loadShader("vertex_shader");
-    const std::string fragment_shader_text = loadShader("fragment_shader");
+    const std::string vertex_shader_text = loadShader("lighting_vertex_shader");
+    const std::string fragment_shader_text = loadShader("lighting_fragment_shader");
     const GLchar* source;
     GLint isCompiled;
 
@@ -124,8 +124,12 @@ void Renderer::render() {
   glUseProgram(shader);
 
   GLint uniformMVP = glGetUniformLocation(shader, "MVP");
+  GLint uniformCameraVector = glGetUniformLocation(shader, "cameraVector");
 
   glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
+
+  glUniform3fv(uniformCameraVector, 1, &camera.lookatDirection[0]);
+
 
   for (auto& chunkPair : world.chunks)
   {
@@ -137,6 +141,7 @@ void Renderer::render() {
     glm::mat4 MVP = VP * translationMatrix;
 
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
+
     glDrawArrays(GL_TRIANGLES, 0, chunkPair.second->vertexPositions.size());   
   }
 }
