@@ -2,7 +2,7 @@
 
 
 Camera::Camera(glm::vec3 position, glm::vec3 lookatPoint) : position(position), lookatPoint(lookatPoint) {
-    lookatDirection = lookatPoint - position;
+    lookatDirection = glm::normalize(lookatPoint - position);
     upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
@@ -22,9 +22,9 @@ void Camera::moveCamera(const glm::vec3& direction, float distance) {
 }
 
 void Camera::rotateCameraY(float angle) {
-    lookatDirection = glm::rotate(this->lookatDirection, angle, this->upVector);
+    lookatDirection = glm::normalize(glm::rotate(this->lookatDirection, angle, this->upVector));
 }
 
 void Camera::rotateCameraX(float angle) {
-    lookatDirection = glm::rotate(this->lookatDirection, angle, glm::cross(lookatDirection, this->upVector));
+    lookatDirection = glm::normalize(glm::rotate(this->lookatDirection, angle, glm::cross(lookatDirection, this->upVector)));
 }
