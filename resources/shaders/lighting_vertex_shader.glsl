@@ -18,10 +18,7 @@ mat3 normalVectors = mat3(
 
 void main()
 {
-    float bug = 0;
-    if (aFacing != 0u && aFacing != 1u && aFacing != 2u) bug = -1.0f;
     gl_Position = MVP * vec4(aPos, 1.0);
     TexCoord = aTexCoord;
     Brightness = abs(dot(normalVectors[aFacing], cameraVector));
-    Brightness += bug;
 };
