@@ -7,11 +7,11 @@ Project written in C++17 with glfw, requires you to have
 Lists of things that need to be done to bring this game up to basic performance and gameplay standards
 
 ## Gameplay
-- [ ] Dynamic chunk generation and deletion
+- [x] Dynamic chunk generation and deletion
 - [ ] More elaborate procedural generation of chunks (see Perlin noise)
 - [ ] Removal and addition of blocks to the world
 - [ ] Other entities to interact with (hostile/friendly)
-- [ ] New shaders
+- [x] New shaders
 - [ ] Better 3D player navigation
 - [ ] Addition of new block textures
 - [ ] Simple player UI
@@ -22,4 +22,3 @@ Lists of things that need to be done to bring this game up to basic performance 
 
 ## Refactoring
 - [ ] Move some generic functions to util.cpp
-- [ ] Addition of prefix 'm' to all class variables (debateable?)
