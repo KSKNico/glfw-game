@@ -1,9 +1,14 @@
 #pragma once
+#include "glad.h"
+#include "stb_image.h"
+
 #include <functional>
 #include <glm/vec3.hpp>
 #include <string>
 #include <fstream>
 #include <filesystem>
+#include <string_view>
+
 
 class IntegerVec3Hasher {
     public:
@@ -16,3 +21,7 @@ class IntegerVec3Hasher {
 std::string loadShader(const std::string &name);
 
 std::string readFile(std::string_view path);
+
+GLuint loadBlockTexture(const std::string &name);
+
+GLuint loadCubeMapTexture(const std::string &name);

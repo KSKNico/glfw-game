@@ -6,6 +6,7 @@ World::World(unsigned int renderDistance, Player &player, Camera &camera) : rend
     std::uniform_int_distribution<> distr(0, 9);
 
     this->chunks = std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>();
+    this->skybox = Skybox();
 
     this->loadChunks();
 }

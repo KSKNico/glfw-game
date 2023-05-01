@@ -34,13 +34,15 @@ class Renderer {
         Camera& camera;
         World& world;
         std::vector<Block> objects;
-        GLuint shader;
+        GLuint blockShader;
+        GLuint skyboxShader;
         GLuint fs;
         GLuint vs;
         GLuint vertexBuffer;
         GLuint colorBuffer;
         GLuint textureCoordinatesBuffer;
         GLuint vao;
-        GLuint texture;
+        GLuint blockTexture;
+        GLuint skyboxTexture;
         glm::mat4 perspectiveMatrix;
 };

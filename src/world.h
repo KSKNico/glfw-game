@@ -4,6 +4,7 @@
 #include "player.h"
 #include "chunk.h"
 #include "util.h"
+#include "skybox.h"
 
 #include <vector>
 #include <memory>
@@ -23,6 +24,7 @@ class World {
 
         Player &player;
         Camera &camera;
+        Skybox skybox;
         std::vector<std::shared_ptr<Block>> visibleBlocks;
         /* std::vector<glm::vec3> vertexPositions;
         std::vector<glm::vec3> vertexColors;
@@ -49,4 +51,5 @@ class World {
         void update();
 
         static glm::ivec3 convertToChunkCoordinates(const glm::vec3 &position);
+
 };
