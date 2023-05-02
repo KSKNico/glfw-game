@@ -176,7 +176,7 @@ void Renderer::render() {
 
   GLint uniformMVP = glGetUniformLocation(skyboxShader, "MVP");
   glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
-  glm::mat4 MVP = VP;
+  glm::mat4 MVP = VP * glm::translate(camera.position);
   glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
 
   glDrawArrays(GL_TRIANGLES, 0, world.skybox.vertexPositions.size());
