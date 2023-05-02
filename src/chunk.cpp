@@ -23,6 +23,9 @@ void Chunk::populateChunk() {
     static std::uniform_int_distribution<> distr(0, 99);
 
     gen.seed(chunkPosition[0] << 8 | chunkPosition[1] << 16 | chunkPosition[2] << 24);
+    const float threshold = 0.5f;
+    const siv::PerlinNoise::seed_type seed = 123456u;
+	const siv::PerlinNoise perlin{ seed };
 
     // std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> this->blocks;
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
@@ -31,7 +34,9 @@ void Chunk::populateChunk() {
                 glm::ivec3 blockPosition(chunkPosition * (int) CHUNK_SIZE + glm::ivec3(x, y, z));
 
                 Block::Type blockType = Block::Type::AIR;
-                if (distr(gen) < 5) {
+
+                const double noise = perlin.octave3D_01(blockPosition.x * 0.01, blockPosition.y * 0.01, blockPosition.z * 0.01, 4);
+                if (noise < threshold) {
                     blockType = Block::Type::SOLID;
                 }
                 blocks[x][y][z].type = blockType;

@@ -2,6 +2,7 @@
 
 #include "block.h"
 #include "util.h"
+#include "perlin.h"
 
 #include "glad.h"
 #define GLFW_INCLUDE_NONE
