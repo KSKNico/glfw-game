@@ -35,7 +35,8 @@ if (${LLVM_SANITIZE})
   add_link_options(-fuse-ld=lld, -Wl, --gdb-index, -fsanitize=address,undefined)
 endif()
 
-target_link_libraries(${PROJECT_NAME} glfw glm::glm)
+# this needs libstdc++ needs static linking to work on windows
+target_link_libraries(${PROJECT_NAME} glfw glm::glm -static-libstdc++)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_compile_features(${PROJECT_NAME} PRIVATE c_std_11)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
