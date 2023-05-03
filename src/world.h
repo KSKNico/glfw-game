@@ -52,4 +52,6 @@ class World {
 
         static glm::ivec3 convertToChunkCoordinates(const glm::vec3 &position);
 
+        void chunkLoader();
+
 };

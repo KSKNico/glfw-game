@@ -5,16 +5,18 @@ Chunk::Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, std
     std::cout << "Created chunk at position " << chunkPosition[0] << " " << chunkPosition[1] << " " << chunkPosition[2] << std::endl;
     this->populateChunk();
     this->createMesh();
-    this->createVAO();
+    hasVAO = false;
 }
 
 Chunk::~Chunk() {
     // free resources used on the GPU
     std::cout << "Deleted chunk at position " << chunkPosition[0] << " " << chunkPosition[1] << " " << chunkPosition[2] << std::endl;
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vertexBuffer);
-    glDeleteBuffers(1, &textureCoordinatesBuffer);
-    glDeleteBuffers(1, &vertexFacingBuffer);
+    if (hasVAO) {
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vertexBuffer);
+        glDeleteBuffers(1, &textureCoordinatesBuffer);
+        glDeleteBuffers(1, &vertexFacingBuffer);
+    }
 }
 
 void Chunk::populateChunk() {
@@ -68,6 +70,9 @@ void Chunk::createVAO() {
     glBufferData(GL_ARRAY_BUFFER, vertexFacing.size() * sizeof(GLubyte), &vertexFacing[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
     glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
+
+    hasVAO = true;
+
 }
 
 void Chunk::createMesh() {
@@ -322,5 +327,5 @@ void Chunk::createMesh() {
             }
         }
     }
-
+    this->hasMesh = true;
 }

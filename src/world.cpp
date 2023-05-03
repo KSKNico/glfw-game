@@ -51,3 +51,9 @@ void World::update() {
 glm::ivec3 World::convertToChunkCoordinates(const glm::vec3 &coordinates) {
     return glm::ivec3(std::floor(coordinates.x / Chunk::CHUNK_SIZE), std::floor(coordinates.y / Chunk::CHUNK_SIZE), std::floor(coordinates.z / Chunk::CHUNK_SIZE));
 }
+
+void World::chunkLoader() {
+    while (true) {
+        this->update();
+    }
+}

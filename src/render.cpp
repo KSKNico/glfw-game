@@ -195,6 +195,9 @@ void Renderer::render() {
   VP = this->perspectiveMatrix * camera.getCameraMatrix();
   for (auto& chunkPair : world.chunks)
   {
+    if (!chunkPair.second->hasVAO && chunkPair.second->hasMesh) {
+      chunkPair.second->createVAO();
+    } 
     glBindVertexArray(chunkPair.second->vao);
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 
