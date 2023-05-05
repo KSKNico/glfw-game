@@ -9,7 +9,7 @@ std::size_t IntegerVec3Hasher::operator()(const glm::ivec3& k) const {
 }
 
 // TODO: Figure out why this breaks when debugging the program
-std::string loadShader(const std::string& name) {
+std::string loadShaderText(const std::string& name) {
   std::filesystem::path shaderPath = std::filesystem::path("../resources/shaders/");
   shaderPath += name + ".glsl";
   std::string text = readFile(shaderPath.string());

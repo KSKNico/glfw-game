@@ -24,6 +24,7 @@ add_executable(
   src/player.cpp
   src/skybox.cpp
   src/chunk.cpp
+  src/shader.cpp
   src/util.cpp
   src/std_image.cpp
   src/jsoncpp.cpp)

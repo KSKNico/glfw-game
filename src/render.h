@@ -16,6 +16,7 @@
 #include "block.h"
 #include "camera.h"
 #include "world.h"
+#include "shader.h"
 
 #include "stb_image.h"
 
@@ -36,12 +37,6 @@ class Renderer {
         std::vector<Block> objects;
         GLuint blockShader;
         GLuint skyboxShader;
-        GLuint fs;
-        GLuint vs;
-        GLuint vertexBuffer;
-        GLuint colorBuffer;
-        GLuint textureCoordinatesBuffer;
-        GLuint vao;
         GLuint blockTexture;
         GLuint skyboxTexture;
         glm::mat4 perspectiveMatrix;

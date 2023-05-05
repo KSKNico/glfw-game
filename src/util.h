@@ -18,7 +18,7 @@ class IntegerVec3Hasher {
 /// @brief Reads shaderfile from ../resources/shaders/<name>.glsl
 /// @param name Name of the glsl file (without extension)
 /// @return Entire content of that file as an std::string
-std::string loadShader(const std::string &name);
+std::string loadShaderText(const std::string &name);
 
 std::string readFile(std::string_view path);
 
