@@ -68,6 +68,11 @@ void Chunk::createVAO() {
     glBufferData(GL_ARRAY_BUFFER, vertexFacing.size() * sizeof(GLubyte), &vertexFacing[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(2);
     glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
+
+    // we don't need the vector data anymore
+    vertexPositions.clear();
+    textureCoordinates.clear();
+    vertexFacing.clear();
 }
 
 void Chunk::createMesh() {
@@ -75,6 +80,7 @@ void Chunk::createMesh() {
     this->vertexColors = std::vector<glm::vec3>();
     this->textureCoordinates = std::vector<glm::vec<2, GLubyte, glm::packed_highp>>();
     this->vertexFacing = std::vector<GLubyte>();
+    this->vertexCount = 0;
 
     // iterates over all blocks
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
@@ -123,6 +129,8 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
+
+                    vertexCount += 6;
                 }
 
                 if ((x > 0 &&
@@ -162,6 +170,8 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
+
+                    vertexCount += 6;
                 }
 
                 if ((z < Chunk::CHUNK_SIZE-1 &&
@@ -201,6 +211,8 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
+
+                    vertexCount += 6;
                 }
 
                 if ((z > 0 &&
@@ -240,6 +252,8 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
+
+                    vertexCount += 6;
                 }
 
                 if ((y < Chunk::CHUNK_SIZE-1 &&
@@ -279,6 +293,8 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
+
+                    vertexCount += 6;
                 }
 
                 if ((y > 0 &&
@@ -318,6 +334,8 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
+
+                    vertexCount += 6;
                 }
             }
         }

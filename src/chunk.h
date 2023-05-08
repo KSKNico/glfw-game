@@ -24,6 +24,8 @@ class Chunk {
         GLuint textureCoordinatesBuffer;
         GLuint vertexFacingBuffer;
 
+        unsigned int vertexCount;
+
         glm::ivec3 chunkPosition;
 
         std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>& chunks;

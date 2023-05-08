@@ -41,6 +41,7 @@ void Renderer::render() {
 
   // render the blocks 
   glUseProgram(blockShader);
+  glDepthFunc(GL_LESS);
 
   uniformMVP = glGetUniformLocation(blockShader, "MVP");
   GLint uniformCameraVector = glGetUniformLocation(blockShader, "cameraVector");
@@ -62,6 +63,6 @@ void Renderer::render() {
 
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
 
-    glDrawArrays(GL_TRIANGLES, 0, chunkPair.second->vertexPositions.size());   
+    glDrawArrays(GL_TRIANGLES, 0, chunkPair.second->vertexCount);
   }
 }
