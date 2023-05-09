@@ -25,6 +25,8 @@ void World::unloadChunks() {
     }
 }
 
+
+//TODO: gradually load chunks to avoid lag spikes
 void World::loadChunks() {
     glm::ivec3 position;
     for (int x = -renderDistance; x <= (int)renderDistance; ++x) {
