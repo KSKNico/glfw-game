@@ -7,14 +7,14 @@ Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::uni
     this->createMesh();
     this->createVAO();
 
-    chunkVertices[0] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
-    chunkVertices[1] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, 0, 0);
-    chunkVertices[2] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, 0);
-    chunkVertices[3] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(0, Chunk::CHUNK_SIZE, 0);
-    chunkVertices[4] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(0, 0, Chunk::CHUNK_SIZE);
-    chunkVertices[5] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, 0, Chunk::CHUNK_SIZE);
-    chunkVertices[6] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
-    chunkVertices[7] = position * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(0, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
+    chunkVertices[0] = position * (int) Chunk::CHUNK_SIZE;
+    chunkVertices[1] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, 0, 0);
+    chunkVertices[2] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, 0);
+    chunkVertices[3] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(0, Chunk::CHUNK_SIZE, 0);
+    chunkVertices[4] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(0, 0, Chunk::CHUNK_SIZE);
+    chunkVertices[5] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, 0, Chunk::CHUNK_SIZE);
+    chunkVertices[6] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
+    chunkVertices[7] = position * (int) Chunk::CHUNK_SIZE + glm::ivec3(0, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
 }
 
 Chunk::~Chunk() {
