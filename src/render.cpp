@@ -48,7 +48,7 @@ void Renderer::render() {
   // VP = this->perspectiveMatrix * camera.getCameraMatrix();
 
   // glm::mat4 skyboxMatrix = VP * glm::translate(camera.position) * glm::scale(glm::vec3(1000.0f, 1000.0f, 1000.0f));
-  glUniform3fv(uniformCameraVector, 1, &camera.lookatDirection[0]);
+  glUniform3fv(uniformCameraVector, 1, &camera.lookAtDirection[0]);
 
   VP = this->perspectiveMatrix * camera.getCameraMatrix();
   for (auto& chunkPair : world.chunks)
@@ -59,7 +59,7 @@ void Renderer::render() {
     glBindVertexArray(chunkPair.second->vao);
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 
-    glm::mat4 translationMatrix = glm::translate(chunkPair.second->chunkPosition * (int) Chunk::CHUNK_SIZE);
+    glm::mat4 translationMatrix = glm::translate(chunkPair.second->position * (int) Chunk::CHUNK_SIZE);
 
 
     glm::mat4 MVP = VP * translationMatrix;

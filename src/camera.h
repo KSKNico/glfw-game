@@ -21,7 +21,7 @@ class Camera {
         glm::mat4 getCameraMatrix();
         glm::vec3 position;
         glm::vec3 lookatPoint;
-        glm::vec3 lookatDirection;
+        glm::vec3 lookAtDirection;
         glm::vec3 upVector;
     private:
         glm::mat4 cameraMatrix;

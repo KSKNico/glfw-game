@@ -26,17 +26,17 @@ void World::unloadChunks() {
 }
 
 void World::loadChunks() {
-    glm::ivec3 chunkPosition;
+    glm::ivec3 position;
     for (int x = -renderDistance; x <= (int)renderDistance; ++x) {
         for (int y = -renderDistance; y <= (int)renderDistance; ++y) {
             for (int z = -renderDistance; z <= (int)renderDistance; ++z) {
                 glm::ivec3 clampedCoordinates = World::convertToChunkCoordinates(camera.position);
-                chunkPosition = clampedCoordinates + glm::ivec3(x, y, z);
+                position = clampedCoordinates + glm::ivec3(x, y, z);
 
-                if (chunks.find(chunkPosition) == chunks.end()) {
-                    // std::unique_ptr<Chunk> chunk = std::make_unique<Chunk> (Chunk(chunkPosition, this->chunks));
-                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(chunkPosition, this->chunks);
-                    chunks.emplace(std::make_pair(chunkPosition, std::move(chunk)));
+                if (chunks.find(position) == chunks.end()) {
+                    // std::unique_ptr<Chunk> chunk = std::make_unique<Chunk> (Chunk(position, this->chunks));
+                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(position, this->chunks);
+                    chunks.emplace(std::make_pair(position, std::move(chunk)));
                 }
             }
         }

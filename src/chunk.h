@@ -27,7 +27,7 @@ class Chunk {
         unsigned int vertexCount;
 
         // position is in chunk coordiantes, world coordinates are position * CHUNK_SIZE
-        glm::ivec3 chunkPosition;
+        glm::ivec3 position;
         std::array<glm::ivec3, 8> chunkVertices;
 
         std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>& chunks;
@@ -39,7 +39,7 @@ class Chunk {
         std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;
         std::vector<GLubyte> vertexFacing;
 
-        Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks);
+        Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks);
         ~Chunk();
 
         Chunk(const Chunk&) = delete;

@@ -2,13 +2,13 @@
 
 
 Camera::Camera(glm::vec3 position, glm::vec3 lookatPoint) : position(position), lookatPoint(lookatPoint) {
-    lookatDirection = glm::normalize(lookatPoint - position);
+    lookAtDirection = glm::normalize(lookatPoint - position);
     upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
-// Camera::Camera(glm::vec3 position, glm::vec3 lookatDirection) : position(position), lookatDirection(lookatDirection) {
+// Camera::Camera(glm::vec3 position, glm::vec3 lookAtDirection) : position(position), lookAtDirection(lookAtDirection) {
 //     pcamera = this;
-//     lookatPoint = position + lookatDirection;
+//     lookatPoint = position + lookAtDirection;
 // }
 
 bool Camera::isChunkInView(const Chunk& chunk) const {
@@ -18,7 +18,7 @@ bool Camera::isChunkInView(const Chunk& chunk) const {
     // and checking if the angle between them is less than 90 degrees
     for (const auto& vertex : chunk.chunkVertices) {
         glm::vec3 cameraToVertex = glm::vec3(vertex) - position;
-        if (glm::dot(lookatDirection, cameraToVertex) > 0.0f) {
+        if (glm::dot(lookAtDirection, cameraToVertex) > 0.0f) {
             return true;
         }
     }
@@ -26,7 +26,7 @@ bool Camera::isChunkInView(const Chunk& chunk) const {
 }
 
 glm::mat4 Camera::getCameraMatrix() {
-    this->cameraMatrix = glm::lookAt(position, position+lookatDirection, this->upVector);
+    this->cameraMatrix = glm::lookAt(position, position+lookAtDirection, this->upVector);
     return cameraMatrix;
 }
 
@@ -35,9 +35,9 @@ void Camera::moveCamera(const glm::vec3& direction, float distance) {
 }
 
 void Camera::rotateCameraY(float angle) {
-    lookatDirection = glm::normalize(glm::rotate(this->lookatDirection, angle, this->upVector));
+    lookAtDirection = glm::normalize(glm::rotate(this->lookAtDirection, angle, this->upVector));
 }
 
 void Camera::rotateCameraX(float angle) {
-    lookatDirection = glm::normalize(glm::rotate(this->lookatDirection, angle, glm::cross(lookatDirection, this->upVector)));
+    lookAtDirection = glm::normalize(glm::rotate(this->lookAtDirection, angle, glm::cross(lookAtDirection, this->upVector)));
 }

@@ -33,17 +33,17 @@ void input::keyCameraCallback(GLFWwindow* window, int key, int scancode, int act
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        input::camera->moveCamera(input::camera->lookatDirection, 0.1f);
+        input::camera->moveCamera(input::camera->lookAtDirection, 0.1f);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        input::camera->moveCamera(input::camera->lookatDirection, -0.1f);
+        input::camera->moveCamera(input::camera->lookAtDirection, -0.1f);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        input::camera->moveCamera(glm::cross( input::camera->lookatDirection, input::camera->upVector), -0.1f);
+        input::camera->moveCamera(glm::cross( input::camera->lookAtDirection, input::camera->upVector), -0.1f);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        input::camera->moveCamera(glm::cross( input::camera->lookatDirection, input::camera->upVector), 0.1f);
+        input::camera->moveCamera(glm::cross( input::camera->lookAtDirection, input::camera->upVector), 0.1f);
     }
 
     // fullscreen
