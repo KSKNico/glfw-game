@@ -81,8 +81,6 @@ int main(int argc, char* argv[]) {
         }
 
 
-        world.update();
-
         // update other events like input handling 
         glfwPollEvents();
 
