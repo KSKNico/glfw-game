@@ -6,6 +6,15 @@ Chunk::Chunk(const glm::ivec3 &chunkPosition, std::unordered_map<glm::ivec3, std
     this->populateChunk();
     this->createMesh();
     this->createVAO();
+
+    chunkVertices[0] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
+    chunkVertices[1] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, 0, 0);
+    chunkVertices[2] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, 0);
+    chunkVertices[3] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(0, Chunk::CHUNK_SIZE, 0);
+    chunkVertices[4] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(0, 0, Chunk::CHUNK_SIZE);
+    chunkVertices[5] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, 0, Chunk::CHUNK_SIZE);
+    chunkVertices[6] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
+    chunkVertices[7] = chunkPosition * glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE) + glm::ivec3(0, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
 }
 
 Chunk::~Chunk() {

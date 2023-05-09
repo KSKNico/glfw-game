@@ -53,6 +53,9 @@ void Renderer::render() {
   VP = this->perspectiveMatrix * camera.getCameraMatrix();
   for (auto& chunkPair : world.chunks)
   {
+    if (!camera.isChunkInView(*(chunkPair.second))) {
+      continue;
+    }
     glBindVertexArray(chunkPair.second->vao);
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 

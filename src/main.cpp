@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 
     Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
 
-    World world = World(2, player, camera);
+    World world = World(5, player, camera);
     // world.populateWorld(30, 30, 30);
 
     Renderer renderer = Renderer(*window, camera, world);

@@ -26,7 +26,9 @@ class Chunk {
 
         unsigned int vertexCount;
 
+        // position is in chunk coordiantes, world coordinates are position * CHUNK_SIZE
         glm::ivec3 chunkPosition;
+        std::array<glm::ivec3, 8> chunkVertices;
 
         std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>& chunks;
 
