@@ -2,7 +2,7 @@
 #include <iostream>
 
 Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks) : position(position), chunks(chunks) {
-    std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+    // std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     this->populateChunk();
     this->createMesh();
     this->createVAO();
@@ -20,7 +20,7 @@ Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::uni
 
 Chunk::~Chunk() {
     // free resources used on the GPU
-    std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+    // std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     if (hasVAO) {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vertexBuffer);
