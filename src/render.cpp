@@ -56,6 +56,9 @@ void Renderer::render() {
     if (!camera.isChunkInView(*(chunkPair.second))) {
       continue;
     }
+    if (!chunkPair.second->hasVAO && chunkPair.second->hasMesh) {
+      chunkPair.second->createVAO();
+    } 
     glBindVertexArray(chunkPair.second->vao);
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 

@@ -23,6 +23,8 @@ class Chunk {
         GLuint vertexBuffer;
         GLuint textureCoordinatesBuffer;
         GLuint vertexFacingBuffer;
+        bool hasVAO;
+        bool hasMesh;
 
         unsigned int vertexCount;
 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <glm/matrix.hpp>
 #include <glm/trigonometric.hpp>
+#include <thread>
 
 #include "render.h"
 #include "camera.h"
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]) {
 
     Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
 
-    World world = World(5, player, camera);
+    World world = World(4, player, camera);
     // world.populateWorld(30, 30, 30);
 
     Renderer renderer = Renderer(*window, camera, world);
@@ -60,7 +61,8 @@ int main(int argc, char* argv[]) {
 
     double lastTime = glfwGetTime();
     int nbFrames = 0;
-
+    
+    std::thread chunkThread = std::thread(&World::chunkLoader, &world);
     // int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
@@ -78,8 +80,6 @@ int main(int argc, char* argv[]) {
             // printf("Player pos: %f %f %f\n", camera.position[0], camera.position[1], camera.position[2]);
         }
 
-
-        world.update();
 
         // update other events like input handling 
         glfwPollEvents();
