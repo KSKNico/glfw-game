@@ -82,9 +82,9 @@ void Chunk::createVAO() {
     glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
 
     // we don't need the vector data anymore
-    vertexPositions.clear();
+/*     vertexPositions.clear();
     textureCoordinates.clear();
-    vertexFacing.clear();
+    vertexFacing.clear(); */
     hasVAO = true;
 
 }
