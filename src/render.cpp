@@ -18,7 +18,7 @@ void Renderer::init() {
     blockShader = Shader("lighting_vertex_shader", "lighting_fragment_shader").id;
     skyboxShader = Shader("skybox_vertex_shader", "skybox_fragment_shader").id;
 
-    blockTexture = loadBlockTexture("uv_grid_opengl");
+    blockTexture = loadBlockTexture("block_texture");
     skyboxTexture = loadCubeMapTexture("skybox");
 
 }
