@@ -39,5 +39,11 @@ void Camera::rotateCameraY(float angle) {
 }
 
 void Camera::rotateCameraX(float angle) {
+    glm::vec3 tempLookAtDirection = lookAtDirection;
     lookAtDirection = glm::normalize(glm::rotate(this->lookAtDirection, angle, glm::cross(lookAtDirection, this->upVector)));
+
+    // prevent the camera from flipping upside down
+    if (glm::abs(glm::dot(lookAtDirection, this->upVector)) > 0.99f) {
+       lookAtDirection = tempLookAtDirection;
+    }
 }
