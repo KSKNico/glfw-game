@@ -8,12 +8,12 @@ Lists of things that need to be done to bring this game up to basic performance 
 
 ## Gameplay
 - [x] Dynamic chunk generation and deletion
-- [ ] More elaborate procedural generation of chunks (see Perlin noise)
+- [x] More elaborate procedural generation of chunks (see Perlin noise)
 - [ ] Removal and addition of blocks to the world
 - [ ] Other entities to interact with (hostile/friendly)
 - [x] New shaders
 - [ ] Better 3D player navigation
-- [ ] Addition of new block textures
+- [x] Addition of new block textures
 - [ ] Simple player UI
 
 ## Performance
@@ -21,4 +21,4 @@ Lists of things that need to be done to bring this game up to basic performance 
 - [ ] Different data structures for world composition
 
 ## Refactoring
-- [ ] Move some generic functions to util.cpp
+- [x] Move some generic functions to util.cpp
