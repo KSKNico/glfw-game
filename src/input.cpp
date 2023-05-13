@@ -23,6 +23,7 @@ void input::init(GLFWwindow* window, Camera* camera, Renderer* renderer) {
     input::isFullscreen = false;
 }
 
+//TODO: two inputs currently don't always work
 void input::keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     // moving
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
