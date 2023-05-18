@@ -25,9 +25,6 @@ void input::init(GLFWwindow* window, Camera* camera, Renderer* renderer) {
     input::pressed = std::array<bool, KEYS>();
 }
 
-
-
-//TODO: two inputs currently don't always work
 void input::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(key == GLFW_KEY_UNKNOWN) return; // Don't accept unknown keys
     if(action == GLFW_PRESS) {
