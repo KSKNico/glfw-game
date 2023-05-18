@@ -3,6 +3,8 @@ Project written in C++17 with glfw, requires you to have
 - glfw3
 - glm
 
+For the build process you will also need cmake.
+
 # TODO Lists
 Lists of things that need to be done to bring this game up to basic performance and gameplay standards
 
