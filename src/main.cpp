@@ -84,6 +84,8 @@ int main(int argc, char* argv[]) {
         // update other events like input handling 
         glfwPollEvents();
 
+        input::handle();
+
         glClearColor(0.1f, 0.2f, 0.3f, 0.5f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

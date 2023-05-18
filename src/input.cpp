@@ -10,61 +10,77 @@ int input::oldWidth;
 int input::oldHeight;
 int input::oldX;
 int input::oldY;
+std::array<bool, input::KEYS> input::pressed;
 
 void input::init(GLFWwindow* window, Camera* camera, Renderer* renderer) {
     input::window = window;
     input::camera = camera;
     input::renderer = renderer;
-    glfwSetKeyCallback(window, input::keyCameraCallback);
-    glfwSetCursorPosCallback(window, input::mouseCameraCallback);
+    glfwSetKeyCallback(window, input::keyCallback);
+    glfwSetCursorPosCallback(window, input::mouseCallback);
     glfwSetFramebufferSizeCallback(window, input::framebufferSizeCallback);
     input::oldMouseX = 0;
     input::oldMouseY = 0;
     input::isFullscreen = false;
+    input::pressed = std::array<bool, KEYS>();
 }
+
+
 
 //TODO: two inputs currently don't always work
-void input::keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    // moving
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        input::camera->moveCamera(glm::vec3(0.0, 1.0, 0.0), 0.1f);
+void input::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if(key == GLFW_KEY_UNKNOWN) return; // Don't accept unknown keys
+    if(action == GLFW_PRESS) {
+        input::pressed[key] = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        input::camera->moveCamera(glm::vec3(0.0, -1.0, 0.0), 0.1f);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        input::camera->moveCamera(input::camera->lookAtDirection, 0.1f);
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        input::camera->moveCamera(input::camera->lookAtDirection, -0.1f);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        input::camera->moveCamera(glm::cross( input::camera->lookAtDirection, input::camera->upVector), -0.1f);
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        input::camera->moveCamera(glm::cross( input::camera->lookAtDirection, input::camera->upVector), 0.1f);
-    }
-
-    // fullscreen
-    if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
-        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-        if (!input::isFullscreen) {
-            glfwGetWindowSize(window, &input::oldWidth, &input::oldHeight);
-            glfwGetWindowPos(window, &input::oldX, &input::oldY);
-            glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-        } else {
-            glfwSetWindowMonitor(window, NULL, input::oldX, input::oldY, input::oldWidth, input::oldHeight, mode->refreshRate);
-        }
-
-        isFullscreen = !isFullscreen;
+    else if(action == GLFW_RELEASE) {
+        input::pressed[key] = false;
     }
 }
 
-void input::mouseCameraCallback(GLFWwindow* window, double mouseX, double mouseY) {
+void input::handle() {
+    for (int i = 0; i < KEYS; ++i) {
+        if(!input::pressed[i]) {
+            continue;
+        }
+        switch(i) {
+            case GLFW_KEY_SPACE:
+                input::camera->moveCamera(glm::vec3(0.0, 1.0, 0.0), 0.1f);
+                break;
+            case GLFW_KEY_LEFT_SHIFT:
+                input::camera->moveCamera(glm::vec3(0.0, -1.0, 0.0), 0.1f);
+                break;
+            case GLFW_KEY_W:
+                input::camera->moveCamera(input::camera->lookAtDirection, 0.1f);
+                break;
+            case GLFW_KEY_S:
+                input::camera->moveCamera(input::camera->lookAtDirection, -0.1f);
+                break;
+            case GLFW_KEY_A:
+                input::camera->moveCamera(glm::cross( input::camera->lookAtDirection, input::camera->upVector), -0.1f);
+                break;
+            case GLFW_KEY_D:
+                input::camera->moveCamera(glm::cross( input::camera->lookAtDirection, input::camera->upVector), 0.1f);
+                break;
+            case GLFW_KEY_F11:
+                GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+                if (!input::isFullscreen) {
+                    glfwGetWindowSize(window, &input::oldWidth, &input::oldHeight);
+                    glfwGetWindowPos(window, &input::oldX, &input::oldY);
+                    glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+                } else {
+                    glfwSetWindowMonitor(window, NULL, input::oldX, input::oldY, input::oldWidth, input::oldHeight, mode->refreshRate);
+                }
+
+                isFullscreen = !isFullscreen;
+                break;
+        }
+    }
+}
+
+void input::mouseCallback(GLFWwindow* window, double mouseX, double mouseY) {
     double mouseDeltaX = mouseX - input::oldMouseX;
     double mouseDeltaY = mouseY - input::oldMouseY;
 

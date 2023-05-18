@@ -9,13 +9,15 @@
 
 #include "camera.h"
 #include "render.h"
+#include <array>
 
 
 namespace input {
-    void keyCameraCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-    void mouseCameraCallback(GLFWwindow* window, double xpos, double ypos);
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void mouseCallback(GLFWwindow* window, double xpos, double ypos);
     void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     void init(GLFWwindow* window, Camera* camera, Renderer* renderer);
+    void handle();
 
     extern GLFWwindow* window; 
     extern Camera* camera;
@@ -23,6 +25,9 @@ namespace input {
     extern double oldMouseX;
     extern double oldMouseY;
     extern bool isFullscreen;
+    constexpr int KEYS = 1024;
+    extern std::array<bool, KEYS> pressed;
+
 
     extern int oldWidth;
     extern int oldHeight;
