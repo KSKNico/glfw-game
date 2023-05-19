@@ -4,15 +4,9 @@ TextureCubemap::TextureCubemap(const std::string& directoryName) {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
-    std::array<std::string, 6> fileNames;
-    int i = 0;
-    std::string path = "../resources/textures/" + directoryName; // + "_" + std::to_string(i) + ".jpg";
-    for (const auto & entry : std::filesystem::directory_iterator(path)) {
-        fileNames[i] = entry.path().filename().string();
-        ++i;
-    }
+    std::vector<std::string> fileNames = getSortedFilesInDirectory(std::filesystem::path("../resources/textures/" + directoryName));
 
-    if (i != 6) {
+    if (fileNames.size() != 6) {
         throw("Invalid number of files");
     }
 

@@ -3,6 +3,7 @@
 #include "stb_image.h"
 
 #include <functional>
+#include <vector>
 #include <glm/vec3.hpp>
 #include <string>
 #include <fstream>
@@ -22,6 +23,4 @@ std::string loadShaderText(const std::string &name);
 
 std::string readFile(std::string_view path);
 
-GLuint loadBlockTexture(const std::string &name);
-
-GLuint loadCubeMapTexture(const std::string &name);
+std::vector<std::string> getSortedFilesInDirectory(const std::filesystem::path& path);
