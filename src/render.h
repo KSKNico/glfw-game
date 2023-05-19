@@ -17,6 +17,8 @@
 #include "camera.h"
 #include "world.h"
 #include "shader.h"
+#include "cubemapTexture.h"
+#include "texture.h"
 
 #include "stb_image.h"
 
@@ -35,9 +37,10 @@ class Renderer {
         Camera& camera;
         World& world;
         std::vector<Block> objects;
-        GLuint blockShader;
-        GLuint skyboxShader;
-        GLuint blockTexture;
-        GLuint skyboxTexture;
+        CubemapTexture skyboxTexture;
+        Texture blockTexture;
+        Shader blockShader;
+        Shader skyboxShader;
+
         glm::mat4 perspectiveMatrix;
 };

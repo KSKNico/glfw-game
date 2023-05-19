@@ -2,7 +2,8 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
-Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(window), camera(camera), world(world)   {
+Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(window), camera(camera), world(world), skyboxTexture("skybox"),
+blockTexture("block_texture"), blockShader("lighting_vertex_shader", "lighting_fragment_shader"), skyboxShader("skybox_vertex_shader", "skybox_fragment_shader")  {
   perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
 }
 
@@ -15,23 +16,23 @@ void Renderer::setPerspectiveMatrix(int width, int height) {
 
 
 void Renderer::init() {
-    blockShader = Shader("lighting_vertex_shader", "lighting_fragment_shader").id;
-    skyboxShader = Shader("skybox_vertex_shader", "skybox_fragment_shader").id;
+    // Shader("lighting_vertex_shader", "lighting_fragment_shader").id;
+    // skyboxShader = Shader("skybox_vertex_shader", "skybox_fragment_shader").id;
 
-    blockTexture = loadBlockTexture("block_texture");
-    skyboxTexture = loadCubeMapTexture("skybox");
+    //blockTexture = loadBlockTexture("block_texture");
+    //skyboxTexture = CubemapTexture("skybox");
 
 }
 
 void Renderer::render() {
   // render the skybox
-  glUseProgram(skyboxShader);
+  skyboxShader.use();
   glDepthFunc(GL_LEQUAL);
 
   glBindVertexArray(world.skybox.vao);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture.id);
 
-  GLint uniformMVP = glGetUniformLocation(skyboxShader, "MVP");
+  GLint uniformMVP = glGetUniformLocation(skyboxShader.id, "MVP");
   glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
   glm::mat4 MVP = VP * glm::translate(camera.position);
   glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
@@ -40,11 +41,11 @@ void Renderer::render() {
 
 
   // render the blocks 
-  glUseProgram(blockShader);
+  blockShader.use();
   glDepthFunc(GL_LESS);
 
-  uniformMVP = glGetUniformLocation(blockShader, "MVP");
-  GLint uniformCameraVector = glGetUniformLocation(blockShader, "cameraVector");
+  uniformMVP = glGetUniformLocation(blockShader.id, "MVP");
+  GLint uniformCameraVector = glGetUniformLocation(blockShader.id, "cameraVector");
   // VP = this->perspectiveMatrix * camera.getCameraMatrix();
 
   // glm::mat4 skyboxMatrix = VP * glm::translate(camera.position) * glm::scale(glm::vec3(1000.0f, 1000.0f, 1000.0f));
@@ -60,7 +61,7 @@ void Renderer::render() {
       chunkPair.second->createVAO();
     } 
     glBindVertexArray(chunkPair.second->vao);
-    glBindTexture(GL_TEXTURE_2D, blockTexture);
+    glBindTexture(GL_TEXTURE_2D, blockTexture.id);
 
     glm::mat4 translationMatrix = glm::translate(chunkPair.second->position * (int) Chunk::CHUNK_SIZE);
 

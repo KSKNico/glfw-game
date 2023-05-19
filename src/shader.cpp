@@ -73,3 +73,11 @@ Shader::Shader(const std::string& vertexName, const std::string& fragmentName) {
       }
     }
 }
+
+Shader::~Shader() {
+  glDeleteProgram(id);
+}
+
+void Shader::use() {
+  glUseProgram(id);
+}

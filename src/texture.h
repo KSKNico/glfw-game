@@ -1,3 +1,5 @@
+#pragma once
+
 #include "glad.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -7,12 +9,10 @@
 
 #include "util.h"
 
-
-class Shader {
+class Texture {
 public:
-    GLuint id;
-    Shader(const std::string& vertexName, const std::string& fragmentName);
-    ~Shader();
+    Texture(const std::string& fileName);
+    ~Texture();
 
-    void use();
+    GLuint id;
 };
