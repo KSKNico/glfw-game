@@ -25,7 +25,7 @@ add_executable(
   src/skybox.cpp
   src/chunk.cpp
   src/shader.cpp
-  src/cubemapTexture.cpp
+  src/textureCubemap.cpp
   src/texture.cpp
   src/util.cpp
   src/std_image.cpp

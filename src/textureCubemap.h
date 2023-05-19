@@ -12,10 +12,10 @@
 
 #include "util.h"
 
-class CubemapTexture {
+class TextureCubemap {
 public:
-    CubemapTexture(const std::string& directoryName);
-    ~CubemapTexture();
+    TextureCubemap(const std::string& directoryName);
+    ~TextureCubemap();
 
     GLuint id;
 };

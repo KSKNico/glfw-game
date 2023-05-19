@@ -1,6 +1,6 @@
-#include "cubemapTexture.h"
+#include "textureCubemap.h"
 
-CubemapTexture::CubemapTexture(const std::string& directoryName) { 
+TextureCubemap::TextureCubemap(const std::string& directoryName) { 
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
@@ -43,6 +43,6 @@ CubemapTexture::CubemapTexture(const std::string& directoryName) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-CubemapTexture::~CubemapTexture() {
+TextureCubemap::~TextureCubemap() {
     glDeleteTextures(1, &id);
 }
