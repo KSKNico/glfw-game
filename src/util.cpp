@@ -12,6 +12,11 @@ std::size_t IntegerVec3Hasher::operator()(const glm::ivec3& k) const {
 std::string loadShaderText(const std::string& name) {
   std::filesystem::path shaderPath = std::filesystem::path("../resources/shaders/");
   shaderPath += name + ".glsl";
+
+  if (!std::filesystem::exists(shaderPath)) {
+    throw("Shader file not found");
+  }
+
   std::string text = readFile(shaderPath.string());
   if (text.empty()) {
     throw(text);
