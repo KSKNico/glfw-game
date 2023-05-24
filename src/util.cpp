@@ -41,7 +41,7 @@ std::string readFile(std::string_view path) {
 std::vector<std::string> getSortedFilesInDirectory(const std::filesystem::path& path) {
     std::vector<std::string> fileNames;
     for (const auto& entry : std::filesystem::directory_iterator(path)) {
-        fileNames.push_back(entry.path().string());
+        fileNames.push_back(std::filesystem::path(entry).filename().string());
     }
     std::sort(fileNames.begin(), fileNames.end());
     return fileNames;
