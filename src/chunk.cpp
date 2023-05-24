@@ -1,7 +1,8 @@
 #include "chunk.h"
 #include <iostream>
 
-Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks) : position(position), chunks(chunks) {
+Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, unsigned int worldSeed) : 
+position(position), chunks(chunks), worldSeed(worldSeed) {
     // std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     this->populateChunk();
     this->createMesh();
@@ -36,8 +37,11 @@ void Chunk::populateChunk() {
 
     gen.seed(position[0] << 8 | position[1] << 16 | position[2] << 24);
     const float threshold = 0.5f;
-    const siv::PerlinNoise::seed_type seed = 123456u;
-	const siv::PerlinNoise perlin{ seed };
+	const siv::PerlinNoise perlin_1{ worldSeed };
+    const siv::PerlinNoise perlin_2{ worldSeed + 10000 };
+
+
+
 
     // std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> this->blocks;
     for (int x = 0; x < Chunk::CHUNK_SIZE; x++){
@@ -47,9 +51,12 @@ void Chunk::populateChunk() {
 
                 Block::Type blockType = Block::Type::AIR;
 
-                const double noise = perlin.octave3D_01(blockPosition.x * 0.01, blockPosition.y * 0.01, blockPosition.z * 0.01, 4);
-                if (noise < threshold) {
-                    blockType = Block::Type::SOLID;
+                const double noise_1 = perlin_1.octave3D_01(blockPosition.x * 0.01, blockPosition.y * 0.01, blockPosition.z * 0.01, 4);
+                const double noise_2 = perlin_2.octave3D_01(blockPosition.x * 0.01, blockPosition.y * 0.01, blockPosition.z * 0.01, 4);
+                if (noise_1 < threshold) {
+                    blockType = Block::Type::RED_STONE;
+                } else if (noise_2 < threshold) {
+                    blockType = Block::Type::PURPLE_STONE;
                 }
                 blocks[x][y][z].type = blockType;
                 blocks[x][y][z].position = blockPosition;
@@ -81,6 +88,12 @@ void Chunk::createVAO() {
     glEnableVertexAttribArray(2);
     glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
 
+    glGenBuffers(1, &textureIndexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, textureIndexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, textureIndices.size() * sizeof(GLubyte), &textureIndices[0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(3);
+    glVertexAttribIPointer(3, 1, GL_UNSIGNED_BYTE, 0, NULL);
+
     // we don't need the vector data anymore
 /*     vertexPositions.clear();
     textureCoordinates.clear();
@@ -94,6 +107,7 @@ void Chunk::createMesh() {
     this->vertexColors = std::vector<glm::vec3>();
     this->textureCoordinates = std::vector<glm::vec<2, GLubyte, glm::packed_highp>>();
     this->vertexFacing = std::vector<GLubyte>();
+    this->textureIndices = std::vector<GLubyte>();
     this->vertexCount = 0;
 
     // iterates over all blocks
@@ -144,6 +158,14 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
 
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
                     vertexCount += 6;
                 }
 
@@ -184,6 +206,14 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
                     vertexFacing.push_back(0);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
 
                     vertexCount += 6;
                 }
@@ -226,6 +256,14 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
 
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
                     vertexCount += 6;
                 }
 
@@ -266,6 +304,15 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
                     vertexFacing.push_back(2);
+
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
 
                     vertexCount += 6;
                 }
@@ -308,6 +355,14 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
 
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
                     vertexCount += 6;
                 }
 
@@ -348,6 +403,14 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
                     vertexFacing.push_back(1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
+                    textureIndices.push_back(this->blocks[x][y][z].type-1);
 
                     vertexCount += 6;
                 }

@@ -11,7 +11,8 @@ class Block {
     public:
         enum Type {
             AIR = 0,
-            SOLID,
+            PURPLE_STONE,
+            RED_STONE
         };
 
         Block(glm::ivec3 position, Type type = Type::AIR);

@@ -26,6 +26,7 @@ add_executable(
   src/chunk.cpp
   src/shader.cpp
   src/textureCubemap.cpp
+  src/textureArray.cpp
   src/texture.cpp
   src/util.cpp
   src/std_image.cpp

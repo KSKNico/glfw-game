@@ -12,6 +12,7 @@
 #include <random>
 #include <unordered_map>
 #include <memory>
+#include <chrono>
 
 
 
@@ -23,6 +24,7 @@ class Chunk {
         GLuint vertexBuffer;
         GLuint textureCoordinatesBuffer;
         GLuint vertexFacingBuffer;
+        GLuint textureIndexBuffer;
         bool hasVAO;
         bool hasMesh;
 
@@ -34,14 +36,19 @@ class Chunk {
 
         std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>& chunks;
 
+        unsigned int worldSeed; 
         std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
 
         std::vector<glm::vec<3, GLubyte, glm::packed_highp>> vertexPositions;
         std::vector<glm::vec3> vertexColors;
         std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;
         std::vector<GLubyte> vertexFacing;
+        std::vector<GLubyte> textureIndices;
 
-        Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks);
+        Chunk(const glm::ivec3 &position, 
+        std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, 
+        unsigned int worldSeed);
+
         ~Chunk();
 
         Chunk(const Chunk&) = delete;

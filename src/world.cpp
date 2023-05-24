@@ -1,9 +1,7 @@
 #include "world.h"
 
 World::World(unsigned int renderDistance, Player &player, Camera &camera) : renderDistance(renderDistance), player(player), camera(camera) {
-    std::random_device rd;  // obtain a random number from hardware
-    std::mt19937 gen(rd()); // seed the generator
-    std::uniform_int_distribution<> distr(0, 9);
+    seed = std::chrono::seconds(std::time(NULL)).count();
 
     this->chunks = std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher>();
     this->skybox = Skybox();
@@ -37,7 +35,7 @@ void World::loadChunks() {
 
                 if (chunks.find(position) == chunks.end()) {
                     // std::unique_ptr<Chunk> chunk = std::make_unique<Chunk> (Chunk(position, this->chunks));
-                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(position, this->chunks);
+                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(position, this->chunks, seed);
                     chunks.emplace(std::make_pair(position, std::move(chunk)));
                 }
             }

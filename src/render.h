@@ -18,7 +18,7 @@
 #include "world.h"
 #include "shader.h"
 #include "textureCubemap.h"
-#include "texture.h"
+#include "textureArray.h"
 
 #include "stb_image.h"
 
@@ -38,7 +38,7 @@ class Renderer {
         World& world;
         std::vector<Block> objects;
         TextureCubemap skyboxTexture;
-        Texture blockTexture;
+        TextureArray blockTextures;
         Shader blockShader;
         Shader skyboxShader;
 

@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <glm/matrix.hpp>
+#include <chrono>
 
 const float GRAVITATION = 1.0f;
 
@@ -21,6 +22,7 @@ class World {
         // std::vector<std::vector<std::vector<Block>>> blocks;
 
         unsigned int renderDistance;
+        unsigned int seed;
 
         Player &player;
         Camera &camera;

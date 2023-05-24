@@ -3,7 +3,7 @@
 #include <glm/gtx/transform.hpp>
 
 Renderer::Renderer(GLFWwindow& window, Camera& camera, World& world) : window(window), camera(camera), world(world), skyboxTexture("skybox"),
-blockTexture("block_texture"), blockShader("lighting_vertex_shader", "lighting_fragment_shader"), skyboxShader("skybox_vertex_shader", "skybox_fragment_shader")  {
+blockTextures("blocks"), blockShader("lighting_array_vertex_shader", "lighting_array_fragment_shader"), skyboxShader("skybox_vertex_shader", "skybox_fragment_shader")  {
   perspectiveMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.f);
 }
 
@@ -16,11 +16,8 @@ void Renderer::setPerspectiveMatrix(int width, int height) {
 
 
 void Renderer::init() {
-    // Shader("lighting_vertex_shader", "lighting_fragment_shader").id;
-    // skyboxShader = Shader("skybox_vertex_shader", "skybox_fragment_shader").id;
-
-    //blockTexture = loadBlockTexture("block_texture");
-    //skyboxTexture = CubemapTexture("skybox");
+    GLuint samplerLocation = glGetUniformLocation(this->blockShader.id, "ourTextures");
+    glUniform1i(samplerLocation, 0);
 
 }
 
@@ -61,7 +58,7 @@ void Renderer::render() {
       chunkPair.second->createVAO();
     } 
     glBindVertexArray(chunkPair.second->vao);
-    glBindTexture(GL_TEXTURE_2D, blockTexture.id);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, blockTextures.id);
 
     glm::mat4 translationMatrix = glm::translate(chunkPair.second->position * (int) Chunk::CHUNK_SIZE);
 
