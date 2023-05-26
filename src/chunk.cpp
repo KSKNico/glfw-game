@@ -36,7 +36,7 @@ void Chunk::populateChunk() {
     static std::uniform_int_distribution<> distr(0, 99);
 
     gen.seed(position[0] << 8 | position[1] << 16 | position[2] << 24);
-    const float threshold = 0.5f;
+    const float threshold = 0.55f;
 	const siv::PerlinNoise perlin_1{ worldSeed };
     const siv::PerlinNoise perlin_2{ worldSeed + 10000 };
 
@@ -53,9 +53,9 @@ void Chunk::populateChunk() {
 
                 const double noise_1 = perlin_1.octave3D_01(blockPosition.x * 0.01, blockPosition.y * 0.01, blockPosition.z * 0.01, 4);
                 const double noise_2 = perlin_2.octave3D_01(blockPosition.x * 0.01, blockPosition.y * 0.01, blockPosition.z * 0.01, 4);
-                if (noise_1 < threshold) {
+                if (noise_1 > threshold) {
                     blockType = Block::Type::RED_STONE;
-                } else if (noise_2 < threshold) {
+                } else if (noise_2 > threshold*1.1f) {
                     blockType = Block::Type::PURPLE_STONE;
                 }
                 blocks[x][y][z].type = blockType;
