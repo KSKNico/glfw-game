@@ -35,7 +35,7 @@ void World::loadChunks() {
 
                 if (chunks.find(position) == chunks.end()) {
                     // std::unique_ptr<Chunk> chunk = std::make_unique<Chunk> (Chunk(position, this->chunks));
-                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(position, this->chunks, seed);
+                    std::unique_ptr<Chunk> chunk = std::make_unique<Chunk>(position, this->chunks, seed, chunkMutex);
                     chunks.emplace(std::make_pair(position, std::move(chunk)));
                 }
             }

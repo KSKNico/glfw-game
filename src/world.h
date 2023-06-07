@@ -13,6 +13,7 @@
 #include <iostream>
 #include <glm/matrix.hpp>
 #include <chrono>
+#include <mutex>
 
 const float GRAVITATION = 1.0f;
 
@@ -28,6 +29,7 @@ class World {
         Camera &camera;
         Skybox skybox;
         std::vector<std::shared_ptr<Block>> visibleBlocks;
+        std::mutex chunkMutex;
         /* std::vector<glm::vec3> vertexPositions;
         std::vector<glm::vec3> vertexColors;
         std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;

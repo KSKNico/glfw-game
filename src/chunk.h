@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <memory>
 #include <chrono>
+#include <mutex>
 
 
 
@@ -38,6 +39,7 @@ class Chunk {
 
         unsigned int worldSeed; 
         std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
+        std::mutex &chunkMutex;
 
         std::vector<glm::vec<3, GLubyte, glm::packed_highp>> vertexPositions;
         std::vector<glm::vec3> vertexColors;
@@ -47,7 +49,7 @@ class Chunk {
 
         Chunk(const glm::ivec3 &position, 
         std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, 
-        unsigned int worldSeed);
+        unsigned int worldSeed, std::mutex &chunkMutex);
 
         ~Chunk();
 

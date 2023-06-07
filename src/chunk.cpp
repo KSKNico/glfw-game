@@ -1,8 +1,8 @@
 #include "chunk.h"
 #include <iostream>
 
-Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, unsigned int worldSeed) : 
-position(position), chunks(chunks), worldSeed(worldSeed) {
+Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, unsigned int worldSeed, std::mutex &chunkMutex) : 
+position(position), chunks(chunks), worldSeed(worldSeed), chunkMutex(chunkMutex) {
     // std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     this->populateChunk();
     this->createMesh();
@@ -21,7 +21,8 @@ position(position), chunks(chunks), worldSeed(worldSeed) {
 
 Chunk::~Chunk() {
     // free resources used on the GPU
-    // std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+    // std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl; 
+    //TODO: this can create a segfault if the chunk is rendered while being deleted
     if (hasVAO) {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vertexBuffer);
@@ -67,6 +68,7 @@ void Chunk::populateChunk() {
 }
 
 void Chunk::createVAO() {
+    chunkMutex.lock();
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -100,6 +102,7 @@ void Chunk::createVAO() {
     vertexFacing.clear(); */
     hasVAO = true;
 
+    chunkMutex.unlock();
 }
 
 void Chunk::createMesh() {

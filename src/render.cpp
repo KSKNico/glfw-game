@@ -54,9 +54,13 @@ void Renderer::render() {
     if (!camera.isChunkInView(*(chunkPair.second))) {
       continue;
     }
+    //TODO: this might be redundant 
     if (!chunkPair.second->hasVAO && chunkPair.second->hasMesh) {
       chunkPair.second->createVAO();
     } 
+
+    world.chunkMutex.lock();
+
     glBindVertexArray(chunkPair.second->vao);
     glBindTexture(GL_TEXTURE_2D_ARRAY, blockTextures.id);
 
@@ -68,5 +72,7 @@ void Renderer::render() {
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
 
     glDrawArrays(GL_TRIANGLES, 0, chunkPair.second->vertexCount);
+  
+    world.chunkMutex.unlock();
   }
 }
