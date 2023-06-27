@@ -1,6 +1,6 @@
 #include "textureCubemap.h"
 
-TextureCubemap::TextureCubemap(const std::string& directoryName) { 
+TextureCubemap::TextureCubemap(const std::string& directoryName) {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
@@ -16,7 +16,7 @@ TextureCubemap::TextureCubemap(const std::string& directoryName) {
     int width, height, nrChannels;
     for (int i = 0; i < 6; ++i) {
         std::string path = "../resources/textures/" + directoryName + "/" + fileNames[i];
-        unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+        unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
         if (data) {
             if (nrChannels == 3) {
             } else {
@@ -25,7 +25,7 @@ TextureCubemap::TextureCubemap(const std::string& directoryName) {
         } else {
             throw("Failed to load texture");
         }
-        
+
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
         stbi_image_free(data);

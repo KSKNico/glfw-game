@@ -1,18 +1,18 @@
-#include "glad.h"
-#include <vector>
 #include <glm/matrix.hpp>
+#include <vector>
 
+#include "glad.h"
 
 class Skybox {
-    public:
-        GLuint vao;
-        GLuint vertexBuffer;
-        GLuint indexBuffer;
+   public:
+    GLuint vao;
+    GLuint vertexBuffer;
+    GLuint indexBuffer;
 
-        std::vector<glm::vec3> vertexPositions;
-        std::vector<GLubyte> indices;
+    std::vector<glm::vec3> vertexPositions;
+    std::vector<GLubyte> indices;
 
-        Skybox();
- 
-        void createVAO();
+    Skybox();
+
+    void createVAO();
 };

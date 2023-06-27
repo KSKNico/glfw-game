@@ -4,16 +4,16 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <string>
-#include <iostream>
+#include <algorithm>
 #include <array>
 #include <filesystem>
-#include <algorithm>
+#include <iostream>
+#include <string>
 
 #include "util.h"
 
 class TextureCubemap {
-public:
+   public:
     TextureCubemap(const std::string& directoryName);
     ~TextureCubemap();
 

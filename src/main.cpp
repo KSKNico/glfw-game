@@ -2,17 +2,16 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <glm/matrix.hpp>
 #include <glm/trigonometric.hpp>
+#include <iostream>
 #include <thread>
 
-#include "render.h"
 #include "camera.h"
 #include "input.h"
-#include "world.h"
 #include "player.h"
-
+#include "render.h"
+#include "world.h"
 
 int main(int argc, char* argv[]) {
     std::cout << "STARTING" << std::endl;
@@ -28,8 +27,7 @@ int main(int argc, char* argv[]) {
 
     if (glfwRawMouseMotionSupported()) {
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-    }
-    else {
+    } else {
         std::cout << "raw mouse motion not supported, using normal mode" << std::endl;
     }
 
@@ -39,16 +37,11 @@ int main(int argc, char* argv[]) {
     gladLoadGL();
     glfwSwapInterval(1);
 
-    glEnable(GL_DEPTH_TEST); // enable depth-testing
-    glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+    glEnable(GL_DEPTH_TEST);  // enable depth-testing
+    glDepthFunc(GL_LESS);     // depth-testing interprets a smaller value as "closer"
     glEnable(GL_CULL_FACE);
 
-
     Camera camera = Camera(glm::vec3(0, 0, 0), glm::vec3(1.0f, 1.0f, 1.0f));
-
-
-
-
 
     Player player = Player(glm::vec3(0.0f, 0.0f, 0.0f), camera);
 
@@ -56,39 +49,33 @@ int main(int argc, char* argv[]) {
     // world.populateWorld(30, 30, 30);
 
     Renderer renderer = Renderer(*window, camera, world);
-    
+
     input::init(window, &camera, &renderer);
 
     double lastTime = glfwGetTime();
     double lastTick = glfwGetTime();
     int ticks = 0;
     int nbFrames = 0;
-    
+
     std::thread chunkThread = std::thread(&World::chunkLoader, &world);
     // int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
-
-
-
         // Measure speed
         double currentTime = glfwGetTime();
         nbFrames++;
-        if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
+        if (currentTime - lastTime >= 1.0) {  // If last prinf() was more than 1 sec ago
             // printf and reset timer
-            printf("%f ms/frame\t%i FPS\n", 1000.0/double(nbFrames), nbFrames);
+            printf("%f ms/frame\t%i FPS\n", 1000.0 / double(nbFrames), nbFrames);
             nbFrames = 0;
             lastTime += 1.0;
             // printf("Player pos: %f %f %f\n", camera.position[0], camera.position[1], camera.position[2]);
         }
 
-
-
-
-        // update other events like input handling 
+        // update other events like input handling
         glfwPollEvents();
 
-        if ( currentTime - lastTick >= 0.01 )   {
+        if (currentTime - lastTick >= 0.01) {
             input::handle();
             lastTick += 0.01;
             ticks++;
@@ -96,7 +83,6 @@ int main(int argc, char* argv[]) {
 
         glClearColor(0.1f, 0.2f, 0.3f, 0.5f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
         renderer.render();
         // put the stuff we've been drawing onto the display

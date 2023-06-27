@@ -11,11 +11,11 @@ World::World(unsigned int renderDistance, Player &player, Camera &camera) : rend
 
 void World::unloadChunks() {
     auto itr = chunks.begin();
-    glm::ivec3 currentChunk = convertToChunkCoordinates(camera.position);  
+    glm::ivec3 currentChunk = convertToChunkCoordinates(camera.position);
     while (itr != chunks.end()) {
-        if (itr->first.x < currentChunk.x - (int) renderDistance || itr->first.x > currentChunk.x + (int) renderDistance ||
-            itr->first.y < currentChunk.y - (int) renderDistance || itr->first.y > currentChunk.y + (int) renderDistance ||
-            itr->first.z < currentChunk.z - (int) renderDistance || itr->first.z > currentChunk.z + (int) renderDistance) {
+        if (itr->first.x < currentChunk.x - (int)renderDistance || itr->first.x > currentChunk.x + (int)renderDistance ||
+            itr->first.y < currentChunk.y - (int)renderDistance || itr->first.y > currentChunk.y + (int)renderDistance ||
+            itr->first.z < currentChunk.z - (int)renderDistance || itr->first.z > currentChunk.z + (int)renderDistance) {
             itr = chunks.erase(itr);
         } else {
             ++itr;
@@ -23,8 +23,7 @@ void World::unloadChunks() {
     }
 }
 
-
-//TODO: gradually load chunks to avoid lag spikes
+// TODO: gradually load chunks to avoid lag spikes
 void World::loadChunks() {
     glm::ivec3 position;
     for (int x = -renderDistance; x <= (int)renderDistance; ++x) {

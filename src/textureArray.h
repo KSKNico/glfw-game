@@ -4,13 +4,13 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include "util.h"
-
 #include <string>
 #include <vector>
 
+#include "util.h"
+
 class TextureArray {
-    public:
+   public:
     TextureArray(const std::string& directoryName);
     ~TextureArray();
 

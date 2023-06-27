@@ -1,6 +1,5 @@
 #include "camera.h"
 
-
 Camera::Camera(glm::vec3 position, glm::vec3 lookatPoint) : position(position), lookatPoint(lookatPoint) {
     lookAtDirection = glm::normalize(lookatPoint - position);
     upVector = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -26,7 +25,7 @@ bool Camera::isChunkInView(const Chunk& chunk) const {
 }
 
 glm::mat4 Camera::getCameraMatrix() {
-    this->cameraMatrix = glm::lookAt(position, position+lookAtDirection, this->upVector);
+    this->cameraMatrix = glm::lookAt(position, position + lookAtDirection, this->upVector);
     return cameraMatrix;
 }
 
@@ -44,6 +43,6 @@ void Camera::rotateCameraX(float angle) {
 
     // prevent the camera from flipping upside down
     if (glm::abs(glm::dot(lookAtDirection, this->upVector)) > 0.99f) {
-       lookAtDirection = tempLookAtDirection;
+        lookAtDirection = tempLookAtDirection;
     }
 }

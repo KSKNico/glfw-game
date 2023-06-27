@@ -4,43 +4,39 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <vector>
-#include <array>
 #include <algorithm>
-#include <memory>
-#include <iostream>
-#include <string>
+#include <array>
 #include <glm/matrix.hpp>
-
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "block.h"
 #include "camera.h"
-#include "world.h"
 #include "shader.h"
-#include "textureCubemap.h"
-#include "textureArray.h"
-
 #include "stb_image.h"
+#include "textureArray.h"
+#include "textureCubemap.h"
+#include "world.h"
 
 class Renderer {
-    public:
-        Renderer(GLFWwindow& window, Camera& camera, World& world);
-        void init();
-        void render();
+   public:
+    Renderer(GLFWwindow& window, Camera& camera, World& world);
+    void init();
+    void render();
 
-        void setPerspectiveMatrix(int width, int height);
+    void setPerspectiveMatrix(int width, int height);
 
- 
+   private:
+    GLFWwindow& window;
+    Camera& camera;
+    World& world;
+    std::vector<Block> objects;
+    TextureCubemap skyboxTexture;
+    TextureArray blockTextures;
+    Shader blockShader;
+    Shader skyboxShader;
 
-    private:
-        GLFWwindow& window;
-        Camera& camera;
-        World& world;
-        std::vector<Block> objects;
-        TextureCubemap skyboxTexture;
-        TextureArray blockTextures;
-        Shader blockShader;
-        Shader skyboxShader;
-
-        glm::mat4 perspectiveMatrix;
+    glm::mat4 perspectiveMatrix;
 };
