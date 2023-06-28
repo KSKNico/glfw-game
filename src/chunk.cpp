@@ -23,12 +23,14 @@ Chunk::~Chunk() {
     // free resources used on the GPU
     // std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     // TODO: this can create a segfault if the chunk is rendered while being deleted
+    chunkMutex.lock();
     if (hasVAO) {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vertexBuffer);
         glDeleteBuffers(1, &textureCoordinatesBuffer);
         glDeleteBuffers(1, &vertexFacingBuffer);
     }
+    chunkMutex.unlock();
 }
 
 void Chunk::populateChunk() {
