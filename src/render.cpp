@@ -19,7 +19,7 @@ void Renderer::init() {
     glUniform1i(samplerLocation, 0);
 }
 
-void Renderer::render() {
+void Renderer::drawSkybox() {
     // render the skybox
     skyboxShader.use();
     glDepthFunc(GL_LEQUAL);
@@ -33,41 +33,54 @@ void Renderer::render() {
     glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
 
     glDrawArrays(GL_TRIANGLES, 0, world.skybox.vertexPositions.size());
+}
 
+void Renderer::drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix) {
+    // TODO: this might be redundant
+    if (!chunk.hasVAO && chunk.hasMesh) {
+        chunk.createVAO();
+    }
+
+    world.chunkMutex.lock();
+
+    glBindVertexArray(chunk.vao);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, blockTextures.id);
+
+    glm::mat4 translationMatrix = glm::translate(chunk.position * (int)Chunk::CHUNK_SIZE);
+
+    glm::mat4 MVP = viewProjectionMatrix * translationMatrix;
+
+    GLint uniformMVP = blockShader.getUniformLocation("MVP");
+    glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
+
+    glDrawArrays(GL_TRIANGLES, 0, chunk.vertexCount);
+
+    world.chunkMutex.unlock();
+}
+
+void Renderer::drawBlocks() {
     // render the blocks
     blockShader.use();
     glDepthFunc(GL_LESS);
 
-    uniformMVP = glGetUniformLocation(blockShader.id, "MVP");
-    GLint uniformCameraVector = glGetUniformLocation(blockShader.id, "cameraVector");
     // VP = this->perspectiveMatrix * camera.getCameraMatrix();
 
     // glm::mat4 skyboxMatrix = VP * glm::translate(camera.position) * glm::scale(glm::vec3(1000.0f, 1000.0f, 1000.0f));
+    GLint uniformCameraVector = blockShader.getUniformLocation("cameraVector");
     glUniform3fv(uniformCameraVector, 1, &camera.lookAtDirection[0]);
 
-    VP = this->perspectiveMatrix * camera.getCameraMatrix();
+    glm::mat4 VP = this->perspectiveMatrix * camera.getCameraMatrix();
     for (auto& chunkPair : world.chunks) {
-        if (!camera.isChunkInView(*(chunkPair.second))) {
+        Chunk& chunk = *(chunkPair.second);
+        if (!camera.isChunkInView(chunk)) {
             continue;
         }
-        // TODO: this might be redundant
-        if (!chunkPair.second->hasVAO && chunkPair.second->hasMesh) {
-            chunkPair.second->createVAO();
-        }
 
-        world.chunkMutex.lock();
-
-        glBindVertexArray(chunkPair.second->vao);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, blockTextures.id);
-
-        glm::mat4 translationMatrix = glm::translate(chunkPair.second->position * (int)Chunk::CHUNK_SIZE);
-
-        glm::mat4 MVP = VP * translationMatrix;
-
-        glUniformMatrix4fv(uniformMVP, 1, false, &MVP[0][0]);
-
-        glDrawArrays(GL_TRIANGLES, 0, chunkPair.second->vertexCount);
-
-        world.chunkMutex.unlock();
+        drawChunk(chunk, VP);
     }
+}
+
+void Renderer::render() {
+    drawSkybox();
+    drawBlocks();
 }

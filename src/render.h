@@ -25,6 +25,9 @@ class Renderer {
     Renderer(GLFWwindow& window, Camera& camera, World& world);
     void init();
     void render();
+    void drawSkybox();
+    void drawBlocks();
+    void drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix);
 
     void setPerspectiveMatrix(int width, int height);
 
