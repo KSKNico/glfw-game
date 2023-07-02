@@ -4,6 +4,7 @@
 
 Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, unsigned int worldSeed, std::mutex &chunkMutex) : position(position), chunks(chunks), worldSeed(worldSeed), chunkMutex(chunkMutex) {
     // std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+    chunkMutex.lock();
     this->populateChunk();
     this->createMesh();
     this->createVAO();
@@ -16,7 +17,7 @@ Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::uni
     chunkVertices[5] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, 0, Chunk::CHUNK_SIZE);
     chunkVertices[6] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
     chunkVertices[7] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(0, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
-    hasVAO = false;
+    chunkMutex.unlock();
 }
 
 Chunk::~Chunk() {
@@ -24,12 +25,12 @@ Chunk::~Chunk() {
     // std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     // TODO: this can create a segfault if the chunk is rendered while being deleted
     chunkMutex.lock();
-    if (hasVAO) {
-        glDeleteVertexArrays(1, &vao);
-        glDeleteBuffers(1, &vertexBuffer);
-        glDeleteBuffers(1, &textureCoordinatesBuffer);
-        glDeleteBuffers(1, &vertexFacingBuffer);
-    }
+
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vertexBuffer);
+    glDeleteBuffers(1, &textureCoordinatesBuffer);
+    glDeleteBuffers(1, &vertexFacingBuffer);
+
     chunkMutex.unlock();
 }
 
@@ -66,7 +67,6 @@ void Chunk::populateChunk() {
 }
 
 void Chunk::createVAO() {
-    chunkMutex.lock();
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -98,9 +98,6 @@ void Chunk::createVAO() {
     /*     vertexPositions.clear();
         textureCoordinates.clear();
         vertexFacing.clear(); */
-    hasVAO = true;
-
-    chunkMutex.unlock();
 }
 
 void Chunk::createMesh() {

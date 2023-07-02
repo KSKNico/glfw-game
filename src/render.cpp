@@ -36,11 +36,6 @@ void Renderer::drawSkybox() {
 }
 
 void Renderer::drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix) {
-    // TODO: this might be redundant
-    if (!chunk.hasVAO && chunk.hasMesh) {
-        chunk.createVAO();
-    }
-
     world.chunkMutex.lock();
 
     glBindVertexArray(chunk.vao);
