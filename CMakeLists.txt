@@ -35,8 +35,8 @@ add_executable(
 option(LLVM_SANITIZE "Enable LLVM sanitizers" ON)
 if (${LLVM_SANITIZE})
   message("LLVM Sanitize enabled")
-  add_compile_options(-fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=address,undefined)
-  add_link_options(-fuse-ld=lld, -Wl, --gdb-index, -fsanitize=address,undefined)
+  add_compile_options(-fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=thread,undefined)
+  add_link_options(-fuse-ld=lld, -Wl, --gdb-index, -fsanitize=thread,undefined)
 endif()
 
 # this needs libstdc++ needs static linking to work on windows
