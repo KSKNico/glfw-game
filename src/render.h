@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "block.h"
@@ -28,6 +29,10 @@ class Renderer {
     void drawSkybox();
     void drawBlocks();
     void drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix);
+    void unloadChunkVAOs();
+
+    void deleteChunkVAO(glm::ivec3 position);
+    void createChunkVAO(Chunk& chunk);
 
     void setPerspectiveMatrix(int width, int height);
 
@@ -40,6 +45,7 @@ class Renderer {
     TextureArray blockTextures;
     Shader blockShader;
     Shader skyboxShader;
+    std::unordered_map<glm::ivec3, std::array<GLuint, 5>, IntegerVec3Hasher> chunkVAOs;
 
     glm::mat4 perspectiveMatrix;
 };

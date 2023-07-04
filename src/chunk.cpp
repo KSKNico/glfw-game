@@ -6,7 +6,6 @@ Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::uni
     // std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     this->populateChunk();
     this->createMesh();
-    this->createVAO();
 
     chunkVertices[0] = position * (int)Chunk::CHUNK_SIZE;
     chunkVertices[1] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, 0, 0);
@@ -16,21 +15,12 @@ Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::uni
     chunkVertices[5] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, 0, Chunk::CHUNK_SIZE);
     chunkVertices[6] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
     chunkVertices[7] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(0, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
-    hasVAO = false;
 }
 
 Chunk::~Chunk() {
     // free resources used on the GPU
     // std::cout << "Deleted chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     // TODO: this can create a segfault if the chunk is rendered while being deleted
-    chunkMutex.lock();
-    if (hasVAO) {
-        glDeleteVertexArrays(1, &vao);
-        glDeleteBuffers(1, &vertexBuffer);
-        glDeleteBuffers(1, &textureCoordinatesBuffer);
-        glDeleteBuffers(1, &vertexFacingBuffer);
-    }
-    chunkMutex.unlock();
 }
 
 void Chunk::populateChunk() {
@@ -63,44 +53,6 @@ void Chunk::populateChunk() {
             }
         }
     }
-}
-
-void Chunk::createVAO() {
-    chunkMutex.lock();
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 3 * vertexPositions.size() * sizeof(GLubyte), &vertexPositions[0][0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
-
-    glGenBuffers(1, &textureCoordinatesBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 2 * textureCoordinates.size() * sizeof(GLubyte), &textureCoordinates[0][0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
-
-    glGenBuffers(1, &vertexFacingBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexFacingBuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertexFacing.size() * sizeof(GLubyte), &vertexFacing[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(2);
-    glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
-
-    glGenBuffers(1, &textureIndexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, textureIndexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, textureIndices.size() * sizeof(GLubyte), &textureIndices[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(3);
-    glVertexAttribIPointer(3, 1, GL_UNSIGNED_BYTE, 0, NULL);
-
-    // we don't need the vector data anymore
-    /*     vertexPositions.clear();
-        textureCoordinates.clear();
-        vertexFacing.clear(); */
-    hasVAO = true;
-
-    chunkMutex.unlock();
 }
 
 void Chunk::createMesh() {
@@ -411,5 +363,4 @@ void Chunk::createMesh() {
             }
         }
     }
-    this->hasMesh = true;
 }
