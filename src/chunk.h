@@ -24,8 +24,6 @@ class Chunk {
     GLuint textureCoordinatesBuffer;
     GLuint vertexFacingBuffer;
     GLuint textureIndexBuffer;
-    bool hasVAO;
-    bool hasMesh;
 
     unsigned int vertexCount;
 
@@ -54,9 +52,11 @@ class Chunk {
     Chunk(const Chunk &) = delete;
     Chunk(Chunk &&) = default;
     Chunk &operator=(const Chunk &) = delete;
+    GLint createVAO();
+    void deleteVAO();
 
+   private:
     void createMesh();
 
     void populateChunk();
-    void createVAO();
 };
