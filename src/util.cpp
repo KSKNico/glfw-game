@@ -46,3 +46,7 @@ std::vector<std::string> getSortedFilesInDirectory(const std::filesystem::path& 
     std::sort(fileNames.begin(), fileNames.end());
     return fileNames;
 }
+
+bool isEdgeVertex(const glm::vec3& position) {
+    return position.x == 0 || position.x == Chunk::CHUNK_SIZE || position.y == 0 || position.y == Chunk::CHUNK_SIZE || position.z == 0 || position.z == Chunk::CHUNK_SIZE;
+}
