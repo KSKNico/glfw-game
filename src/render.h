@@ -15,6 +15,7 @@
 
 #include "block.h"
 #include "camera.h"
+#include "integer_vec3_hasher.h"
 #include "shader.h"
 #include "stb_image.h"
 #include "textureArray.h"

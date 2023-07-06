@@ -29,6 +29,7 @@ add_executable(
   src/textureArray.cpp
   src/texture.cpp
   src/util.cpp
+  src/integer_vec3_hasher.cpp
   src/std_image.cpp
   src/jsoncpp.cpp)
 

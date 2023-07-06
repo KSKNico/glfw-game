@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 
+#include "stb_image.h"
 #include "util.h"
 
 class TextureCubemap {

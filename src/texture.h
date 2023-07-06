@@ -8,6 +8,7 @@
 #include <string>
 
 #include "util.h"
+#include "stb_image.h"
 
 class Texture {
    public:

@@ -1,12 +1,5 @@
 #pragma once
 
-#include "block.h"
-#include "glad.h"
-#include "perlin.h"
-#include "util.h"
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
 #include <array>
 #include <chrono>
 #include <memory>
@@ -15,9 +8,18 @@
 #include <unordered_map>
 #include <vector>
 
+#include "block.h"
+#include "glad.h"
+#include "integer_vec3_hasher.h"
+#include "perlin.h"
+#include "util.h"
+
 class Chunk {
    public:
-    static constexpr const unsigned char CHUNK_SIZE = 16;
+    static constexpr unsigned char CHUNK_SIZE = 16;
+    static constexpr std::array<glm::ivec3, 6> ADJACENT_CHUNK_POSITIONS = {
+        glm::ivec3(0, 0, 1), glm::ivec3(0, 0, -1), glm::ivec3(0, 1, 0),
+        glm::ivec3(0, -1, 0), glm::ivec3(1, 0, 0), glm::ivec3(-1, 0, 0)};
 
     GLuint vao;
     GLuint vertexBuffer;
