@@ -53,6 +53,39 @@ void Chunk::populateChunk() {
     }
 }
 
+bool Chunk::isSurrounded() {
+    for (int i = 0; i < 6; i++) {
+        glm::ivec3 adjacentChunkPosition = this->position + Chunk::ADJACENT_CHUNK_POSITIONS[i];
+        if (this->chunks.find(adjacentChunkPosition) == this->chunks.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Chunk::optimizeMesh() {
+    if (!this->isSurrounded()) {
+        return;
+    }
+    for (auto &vertex : this->vertexPositions) {
+        if (!isEdgeVertex(vertex)) {
+            continue;
+        }
+        for (int i = 0; i < 6; i++) {
+            glm::ivec3 adjacentChunkPosition = this->position + Chunk::ADJACENT_CHUNK_POSITIONS[i];
+            if (this->chunks.find(adjacentChunkPosition) == this->chunks.end()) {
+                continue;
+            }
+            Chunk &adjacentChunk = *this->chunks[adjacentChunkPosition];
+            for (auto &adjacentVertex : adjacentChunk.vertexPositions) {
+                if (adjacentVertex == vertex) {
+                    adjacentVertex = glm::vec3(0, 0, 0);
+                }
+            }
+        }
+    }
+}
+
 void Chunk::createMesh() {
     this->vertexPositions = std::vector<glm::vec<3, GLubyte, glm::packed_highp>>();
     this->vertexColors = std::vector<glm::vec3>();

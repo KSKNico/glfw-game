@@ -56,6 +56,8 @@ class Chunk {
     Chunk &operator=(const Chunk &) = delete;
     GLint createVAO();
     void deleteVAO();
+    bool isSurrounded();
+    void optimizeMesh();
 
    private:
     void createMesh();
