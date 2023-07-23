@@ -30,6 +30,7 @@ add_executable(
   src/texture.cpp
   src/util.cpp
   src/integer_vec3_hasher.cpp
+  src/vertex.cpp
   src/std_image.cpp
   src/jsoncpp.cpp)
 

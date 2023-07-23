@@ -2,7 +2,7 @@
 
 uniform sampler2DArray ourTextures;
 
-in vec2 TexCoord;
+flat in uvec2 TexCoord;
 in float Brightness;
 flat in uint TextureIndex;
 

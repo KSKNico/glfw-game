@@ -13,6 +13,7 @@
 #include "integer_vec3_hasher.h"
 #include "perlin.h"
 #include "util.h"
+#include "vertex.h"
 
 class Chunk {
    public:
@@ -39,11 +40,7 @@ class Chunk {
     std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
     std::mutex &chunkMutex;
 
-    std::vector<glm::vec<3, GLubyte, glm::packed_highp>> vertexPositions;
-    std::vector<glm::vec3> vertexColors;
-    std::vector<glm::vec<2, GLubyte, glm::packed_highp>> textureCoordinates;
-    std::vector<GLubyte> vertexFacing;
-    std::vector<GLubyte> textureIndices;
+    std::vector<Vertex> vertices;
 
     Chunk(const glm::ivec3 &position,
           std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks,
@@ -54,10 +51,9 @@ class Chunk {
     Chunk(const Chunk &) = delete;
     Chunk(Chunk &&) = default;
     Chunk &operator=(const Chunk &) = delete;
-    GLint createVAO();
-    void deleteVAO();
     bool isSurrounded();
     void optimizeMesh();
+    static bool isVertexCongruent(const glm::vec3 &v1, const glm::vec3 &v2);
 
    private:
     void createMesh();

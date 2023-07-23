@@ -20,6 +20,7 @@
 #include "stb_image.h"
 #include "textureArray.h"
 #include "textureCubemap.h"
+#include "vertex.h"
 #include "world.h"
 
 class Renderer {
@@ -46,7 +47,7 @@ class Renderer {
     TextureArray blockTextures;
     Shader blockShader;
     Shader skyboxShader;
-    std::unordered_map<glm::ivec3, std::array<GLuint, 5>, IntegerVec3Hasher> chunkVAOs;
+    std::unordered_map<glm::ivec3, std::array<GLuint, 2>, IntegerVec3Hasher> chunkBuffers;
 
     glm::mat4 perspectiveMatrix;
 };

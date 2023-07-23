@@ -24,7 +24,7 @@ void Renderer::unloadChunkVAOs() {
     world.chunkMutex.lock();
     std::vector<glm::ivec3>
         toRemove;
-    for (auto& [position, vao] : chunkVAOs) {
+    for (auto& [position, buffers] : this->chunkBuffers) {
         if (world.chunks.find(position) == world.chunks.end()) {
             toRemove.push_back(position);
         }
@@ -36,49 +36,32 @@ void Renderer::unloadChunkVAOs() {
 }
 
 void Renderer::deleteChunkVAO(glm::ivec3 position) {
-    auto& [vao, vertexBuffer, textureCoordinatesBuffer, vertexFacingBuffer, textureIndicesBuffer] = chunkVAOs[position];
+    auto& [vao, vertexBuffer] = chunkBuffers[position];
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vertexBuffer);
-    glDeleteBuffers(1, &textureCoordinatesBuffer);
-    glDeleteBuffers(1, &vertexFacingBuffer);
-    glDeleteBuffers(1, &textureIndicesBuffer);
 
     // delete vao from map
-    chunkVAOs.erase(position);
+    chunkBuffers.erase(position);
 }
 
 void Renderer::createChunkVAO(Chunk& chunk) {
-    std::array<GLuint, 5> buffers;
+    GLuint vao;
+    GLuint vertexBuffer;
 
-    glGenVertexArrays(1, &buffers[0]);
-    glBindVertexArray(buffers[0]);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    glGenBuffers(1, &buffers[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-    glBufferData(GL_ARRAY_BUFFER, 3 * chunk.vertexPositions.size() * sizeof(GLubyte), &chunk.vertexPositions[0][0], GL_STATIC_DRAW);
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, chunk.vertices.size() * sizeof(std::array<GLuint, 2>), &Vertex::interlaceVertexData(chunk.vertices)[0], GL_STATIC_DRAW);
+
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
 
-    glGenBuffers(1, &buffers[2]);
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-    glBufferData(GL_ARRAY_BUFFER, 2 * chunk.textureCoordinates.size() * sizeof(GLubyte), &chunk.textureCoordinates[0][0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0, 2, GL_UNSIGNED_INT, GL_FALSE, 0, NULL);
 
-    glGenBuffers(1, &buffers[3]);
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
-    glBufferData(GL_ARRAY_BUFFER, chunk.vertexFacing.size() * sizeof(GLubyte), &chunk.vertexFacing[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(2);
-    glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, 0, NULL);
-
-    glGenBuffers(1, &buffers[4]);
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
-    glBufferData(GL_ARRAY_BUFFER, chunk.textureIndices.size() * sizeof(GLubyte), &chunk.textureIndices[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(3);
-    glVertexAttribIPointer(3, 1, GL_UNSIGNED_BYTE, 0, NULL);
-
+    std::array<GLuint, 2> buffers = {vao, vertexBuffer};
     // add it to the VAO map, use copy operations
-    chunkVAOs[chunk.position] = buffers;
+    chunkBuffers[chunk.position] = buffers;
 }
 
 void Renderer::drawSkybox() {
@@ -98,7 +81,7 @@ void Renderer::drawSkybox() {
 }
 
 void Renderer::drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix) {
-    glBindVertexArray(chunkVAOs[chunk.position][0]);
+    glBindVertexArray(chunkBuffers[chunk.position][0]);
     glBindTexture(GL_TEXTURE_2D_ARRAY, blockTextures.id);
 
     glm::mat4 translationMatrix = glm::translate(chunk.position * (int)Chunk::CHUNK_SIZE);
@@ -129,7 +112,7 @@ void Renderer::drawBlocks() {
             continue;
         }
         // check if chunk exists in VAO map
-        if (chunkVAOs.find(chunk.position) == chunkVAOs.end()) {
+        if (chunkBuffers.find(chunk.position) == chunkBuffers.end()) {
             createChunkVAO(chunk);
         }
 

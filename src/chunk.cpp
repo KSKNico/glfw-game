@@ -63,35 +63,35 @@ bool Chunk::isSurrounded() {
     return true;
 }
 
-void Chunk::optimizeMesh() {
-    if (!this->isSurrounded()) {
-        return;
-    }
-    for (auto &vertex : this->vertexPositions) {
-        if (!isEdgeVertex(vertex)) {
-            continue;
-        }
-        for (int i = 0; i < 6; i++) {
-            glm::ivec3 adjacentChunkPosition = this->position + Chunk::ADJACENT_CHUNK_POSITIONS[i];
-            if (this->chunks.find(adjacentChunkPosition) == this->chunks.end()) {
-                continue;
-            }
-            Chunk &adjacentChunk = *this->chunks[adjacentChunkPosition];
-            for (auto &adjacentVertex : adjacentChunk.vertexPositions) {
-                if (adjacentVertex == vertex) {
-                    adjacentVertex = glm::vec3(0, 0, 0);
-                }
-            }
-        }
-    }
-}
+// void Chunk::optimizeMesh() {
+//     if (!this->isSurrounded()) {
+//         return;
+//     }
+//     for (auto &vertex : this->vertexPositions) {
+//         if (!isEdgeVertex(vertex)) {
+//             continue;
+//         }
+//         for (int i = 0; i < 6; i++) {
+//             glm::ivec3 adjacentChunkPosition = this->position + Chunk::ADJACENT_CHUNK_POSITIONS[i];
+//             if (this->chunks.find(adjacentChunkPosition) == this->chunks.end()) {
+//                 continue;
+//             }
+//             Chunk &adjacentChunk = *this->chunks[adjacentChunkPosition];
+//             for (auto &adjacentVertex : adjacentChunk.vertexPositions) {
+//                 if (adjacentVertex == vertex) {
+//                     adjacentVertex = glm::vec3(0, 0, 0);
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// bool Chunk::isVertexCongruent(const glm::vec3 vertex1, const glm::vec3 vertex2) {
+//     return vertex1.x && vertex1.y == vertex2.y && vertex1.z == vertex2.z;
+// }
 
 void Chunk::createMesh() {
-    this->vertexPositions = std::vector<glm::vec<3, GLubyte, glm::packed_highp>>();
-    this->vertexColors = std::vector<glm::vec3>();
-    this->textureCoordinates = std::vector<glm::vec<2, GLubyte, glm::packed_highp>>();
-    this->vertexFacing = std::vector<GLubyte>();
-    this->textureIndices = std::vector<GLubyte>();
+    this->vertices = std::vector<Vertex>();
     this->vertexCount = 0;
 
     // iterates over all blocks
@@ -101,7 +101,7 @@ void Chunk::createMesh() {
                 if (this->blocks[x][y][z].type == Block::Type::AIR) {
                     continue;
                 }
-                glm::vec3 currentBlockPosition(x, y, z);
+                v_position currentBlockPosition(x, y, z);
 
                 if (
                     (x < Chunk::CHUNK_SIZE - 1 &&
@@ -109,45 +109,19 @@ void Chunk::createMesh() {
                     (x == Chunk::CHUNK_SIZE - 1 && chunks.find(position + glm::ivec3(1, 0, 0)) == chunks.end()) ||
                     (x == Chunk::CHUNK_SIZE - 1 && chunks.find(position + glm::ivec3(1, 0, 0)) != chunks.end() && chunks.at(position + glm::ivec3(1, 0, 0))->blocks[0][y][z].type == Block::Type::AIR)) {
                     // right face
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 1));
+                    Vertex v1(currentBlockPosition + v_position(1, 0, 1), v_textureCoordinates(0, 1), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v2(currentBlockPosition + v_position(1, 0, 0), v_textureCoordinates(1, 1), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v3(currentBlockPosition + v_position(1, 1, 1), v_textureCoordinates(0, 0), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v4(currentBlockPosition + v_position(1, 1, 1), v_textureCoordinates(0, 0), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v5(currentBlockPosition + v_position(1, 0, 0), v_textureCoordinates(1, 1), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v6(currentBlockPosition + v_position(1, 1, 0), v_textureCoordinates(1, 0), 0, this->blocks[x][y][z].type - 1);
 
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 0));
-
-                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
-
-                    textureCoordinates.push_back(glm::vec2(0, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 0));
-
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v3);
+                    vertices.push_back(v4);
+                    vertices.push_back(v5);
+                    vertices.push_back(v6);
 
                     vertexCount += 6;
                 }
@@ -157,45 +131,19 @@ void Chunk::createMesh() {
                     (x == 0 && chunks.find(position + glm::ivec3(-1, 0, 0)) == chunks.end()) ||
                     (x == 0 && chunks.find(position + glm::ivec3(-1, 0, 0)) != chunks.end() && chunks.at(position + glm::ivec3(-1, 0, 0))->blocks[Chunk::CHUNK_SIZE - 1][y][z].type == Block::Type::AIR)) {
                     // left face
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 0));
+                    Vertex v1(currentBlockPosition + v_position(0, 0, 0), v_textureCoordinates(0, 1), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v2(currentBlockPosition + v_position(0, 0, 1), v_textureCoordinates(1, 1), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v3(currentBlockPosition + v_position(0, 1, 0), v_textureCoordinates(0, 0), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v4(currentBlockPosition + v_position(0, 1, 0), v_textureCoordinates(0, 0), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v5(currentBlockPosition + v_position(0, 0, 1), v_textureCoordinates(1, 1), 0, this->blocks[x][y][z].type - 1);
+                    Vertex v6(currentBlockPosition + v_position(0, 1, 1), v_textureCoordinates(1, 0), 0, this->blocks[x][y][z].type - 1);
 
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 1));
-
-                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
-
-                    textureCoordinates.push_back(glm::vec2(0, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 0));
-
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-                    vertexFacing.push_back(0);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v3);
+                    vertices.push_back(v4);
+                    vertices.push_back(v5);
+                    vertices.push_back(v6);
 
                     vertexCount += 6;
                 }
@@ -205,45 +153,19 @@ void Chunk::createMesh() {
                     (z == Chunk::CHUNK_SIZE - 1 && chunks.find(position + glm::ivec3(0, 0, 1)) == chunks.end()) ||
                     (z == Chunk::CHUNK_SIZE - 1 && chunks.find(position + glm::ivec3(0, 0, 1)) != chunks.end() && chunks.at(position + glm::ivec3(0, 0, 1))->blocks[x][y][0].type == Block::Type::AIR)) {
                     // front face
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 1));
+                    Vertex v1(currentBlockPosition + v_position(0, 0, 1), v_textureCoordinates(0, 1), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v2(currentBlockPosition + v_position(1, 0, 1), v_textureCoordinates(1, 1), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v3(currentBlockPosition + v_position(0, 1, 1), v_textureCoordinates(0, 0), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v4(currentBlockPosition + v_position(0, 1, 1), v_textureCoordinates(0, 0), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v5(currentBlockPosition + v_position(1, 0, 1), v_textureCoordinates(1, 1), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v6(currentBlockPosition + v_position(1, 1, 1), v_textureCoordinates(1, 0), 2, this->blocks[x][y][z].type - 1);
 
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 1));
-
-                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
-
-                    textureCoordinates.push_back(glm::vec2(0, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 0));
-
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v3);
+                    vertices.push_back(v4);
+                    vertices.push_back(v5);
+                    vertices.push_back(v6);
 
                     vertexCount += 6;
                 }
@@ -253,45 +175,19 @@ void Chunk::createMesh() {
                     (z == 0 && chunks.find(position + glm::ivec3(0, 0, -1)) == chunks.end()) ||
                     (z == 0 && chunks.find(position + glm::ivec3(0, 0, -1)) != chunks.end() && chunks.at(position + glm::ivec3(0, 0, -1))->blocks[x][y][Chunk::CHUNK_SIZE - 1].type == Block::Type::AIR)) {
                     // back face
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 0));
+                    Vertex v1(currentBlockPosition + v_position(1, 0, 0), v_textureCoordinates(0, 1), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v2(currentBlockPosition + v_position(0, 0, 0), v_textureCoordinates(1, 1), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v3(currentBlockPosition + v_position(1, 1, 0), v_textureCoordinates(0, 0), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v4(currentBlockPosition + v_position(1, 1, 0), v_textureCoordinates(0, 0), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v5(currentBlockPosition + v_position(0, 0, 0), v_textureCoordinates(1, 1), 2, this->blocks[x][y][z].type - 1);
+                    Vertex v6(currentBlockPosition + v_position(0, 1, 0), v_textureCoordinates(1, 0), 2, this->blocks[x][y][z].type - 1);
 
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 0));
-
-                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
-
-                    textureCoordinates.push_back(glm::vec2(0, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 0));
-
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-                    vertexFacing.push_back(2);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v3);
+                    vertices.push_back(v4);
+                    vertices.push_back(v5);
+                    vertices.push_back(v6);
 
                     vertexCount += 6;
                 }
@@ -301,45 +197,19 @@ void Chunk::createMesh() {
                     (y == Chunk::CHUNK_SIZE - 1 && chunks.find(position + glm::ivec3(0, 1, 0)) == chunks.end()) ||
                     (y == Chunk::CHUNK_SIZE - 1 && chunks.find(position + glm::ivec3(0, 1, 0)) != chunks.end() && chunks.at(position + glm::ivec3(0, 1, 0))->blocks[x][0][z].type == Block::Type::AIR)) {
                     // top face
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 0));
+                    Vertex v1(currentBlockPosition + v_position(0, 1, 1), v_textureCoordinates(0, 1), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v2(currentBlockPosition + v_position(1, 1, 1), v_textureCoordinates(1, 1), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v3(currentBlockPosition + v_position(0, 1, 0), v_textureCoordinates(0, 0), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v4(currentBlockPosition + v_position(0, 1, 0), v_textureCoordinates(0, 0), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v5(currentBlockPosition + v_position(1, 1, 1), v_textureCoordinates(1, 1), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v6(currentBlockPosition + v_position(1, 1, 0), v_textureCoordinates(1, 0), 1, this->blocks[x][y][z].type - 1);
 
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 1, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 1, 0));
-
-                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
-
-                    textureCoordinates.push_back(glm::vec2(0, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 0));
-
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v3);
+                    vertices.push_back(v4);
+                    vertices.push_back(v5);
+                    vertices.push_back(v6);
 
                     vertexCount += 6;
                 }
@@ -349,45 +219,19 @@ void Chunk::createMesh() {
                     (y == 0 && chunks.find(position + glm::ivec3(0, -1, 0)) == chunks.end()) ||
                     (y == 0 && chunks.find(position + glm::ivec3(0, -1, 0)) != chunks.end() && chunks.at(position + glm::ivec3(0, -1, 0))->blocks[x][Chunk::CHUNK_SIZE - 1][z].type == Block::Type::AIR)) {
                     // bottom face
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 0));
+                    Vertex v1(currentBlockPosition + v_position(1, 0, 1), v_textureCoordinates(0, 1), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v2(currentBlockPosition + v_position(0, 0, 1), v_textureCoordinates(1, 1), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v3(currentBlockPosition + v_position(1, 0, 0), v_textureCoordinates(0, 0), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v4(currentBlockPosition + v_position(1, 0, 0), v_textureCoordinates(0, 0), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v5(currentBlockPosition + v_position(0, 0, 1), v_textureCoordinates(1, 1), 1, this->blocks[x][y][z].type - 1);
+                    Vertex v6(currentBlockPosition + v_position(0, 0, 0), v_textureCoordinates(1, 0), 1, this->blocks[x][y][z].type - 1);
 
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(1, 0, 0));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 1));
-                    vertexPositions.push_back(currentBlockPosition + glm::vec3(0, 0, 0));
-
-                    /* vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-                    vertexColors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-                    vertexColors.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); */
-
-                    textureCoordinates.push_back(glm::vec2(0, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-
-                    textureCoordinates.push_back(glm::vec2(0, 0));
-                    textureCoordinates.push_back(glm::vec2(1, 1));
-                    textureCoordinates.push_back(glm::vec2(1, 0));
-
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-                    vertexFacing.push_back(1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
-                    textureIndices.push_back(this->blocks[x][y][z].type - 1);
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v3);
+                    vertices.push_back(v4);
+                    vertices.push_back(v5);
+                    vertices.push_back(v6);
 
                     vertexCount += 6;
                 }
