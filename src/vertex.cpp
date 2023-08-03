@@ -2,8 +2,8 @@
 
 std::array<GLuint, 2> Vertex::convertVertex() const {
     std::array<GLuint, 2> data;
-    data[0] = position.x | (position.y << 8) | (position.z << 16) | (facing << 24);
-    data[1] = textureCoordinates.x | (textureCoordinates.y << 8) | (textureIndex << 16);
+    data[0] = position.x | (position.y << 8) | (position.z << 16) | (static_cast<GLuint>(facing) << 24);
+    data[1] = textureCoordinates.x | (textureCoordinates.y << 8) | (static_cast<GLuint>(textureIndex) << 16);
     return data;
 }
 
