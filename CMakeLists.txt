@@ -44,12 +44,15 @@ add_executable(
   ${SOURCE}
   )
 
-# option(LLVM_SANITIZE "Enable LLVM sanitizers" OFF)
-# if (${LLVM_SANITIZE})
-#   message("LLVM Sanitize enabled")
-#   add_compile_options(-fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=thread,undefined)
-#   add_link_options(-fuse-ld=lld, -Wl, --gdb-index, -fsanitize=thread,undefined)
-# endif()
+if(MSVC OR MSYS OR MINGW)
+    # for Windows operating system in general
+    # windows needs static linking of stdc++ for some reason
+    target_link_libraries(${PROJECT_NAME} glfw glm::glm -static-libstdc++)
+endif()
+if (UNIX)
+    # for Linux, BSD, Solaris, Minix
+    target_link_libraries(${PROJECT_NAME} glfw glm)
+endif()
 
 # this needs libstdc++ needs static linking to work on windows
 target_link_libraries(${PROJECT_NAME} glfw glm -static-libstdc++)
