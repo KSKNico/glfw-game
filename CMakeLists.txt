@@ -30,8 +30,7 @@ add_executable(
   src/texture.cpp
   src/util.cpp
   src/integer_vec3_hasher.cpp
-  src/std_image.cpp
-  src/jsoncpp.cpp)
+  src/std_image.cpp)
 
 option(LLVM_SANITIZE "Enable LLVM sanitizers" ON)
 if (${LLVM_SANITIZE})
@@ -45,6 +44,9 @@ target_link_libraries(${PROJECT_NAME} glfw glm::glm -static-libstdc++)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_compile_features(${PROJECT_NAME} PRIVATE c_std_11)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
+
+# enable experimental glm features
+target_compile_definitions(${PROJECT_NAME} PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME_DEBUG "glfw-game_debug")

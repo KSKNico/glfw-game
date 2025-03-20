@@ -22,6 +22,6 @@ void main()
 {
     gl_Position = MVP * vec4(aPos, 1.0);
     TexCoord = aTexCoord;
-    Brightness = abs(dot(normalVectors[aFacing], cameraVector));
+    Brightness = clamp(abs(dot(normalVectors[aFacing], cameraVector)), 0.6f, 1.0f);
     TextureIndex = aTextureIndex;
 };
