@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "block.h"
+#include "direction.h"
 #include "glad.h"
 #include "integer_vec3_hasher.h"
 #include "perlin.h"
@@ -22,26 +23,9 @@ class Chunk {
         glm::ivec3(0, 0, 1), glm::ivec3(0, 0, -1), glm::ivec3(0, 1, 0),
         glm::ivec3(0, -1, 0), glm::ivec3(1, 0, 0), glm::ivec3(-1, 0, 0)};
 
-    using quad = std::pair<glm::u8vec2, glm::u8vec2>;
+    using quad = std::pair<glm::u8vec3, glm::u8vec3>;
     using quadMesh = std::vector<quad>;
     using chunkSlice = std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>;
-
-    enum class Direction {
-        POS_X,
-        NEG_X,
-        POS_Y,
-        NEG_Y,
-        POS_Z,
-        NEG_Z
-    };
-
-    static constexpr std::array<glm::ivec3, 6> DIRECTION_VECTORS = {
-        glm::ivec3(1, 0, 0),
-        glm::ivec3(-1, 0, 0),
-        glm::ivec3(0, 1, 0),
-        glm::ivec3(0, -1, 0),
-        glm::ivec3(0, 0, 1),
-        glm::ivec3(0, 0, -1)};
 
     GLuint vao;
     GLuint vertexBuffer;
@@ -63,16 +47,19 @@ class Chunk {
         blocks;
     std::mutex &chunkMutex;
 
-    std::vector<glm::vec<3, GLubyte, glm::packed_highp>>
-        vertexPositions;
-    std::vector<glm::vec3>
-        vertexColors;
-    std::vector<glm::vec<2, GLubyte, glm::packed_highp>>
-        textureCoordinates;
-    std::vector<GLubyte>
-        vertexFacing;
-    std::vector<GLubyte>
-        textureIndices;
+    std::vector<glm::vec<3, GLubyte, glm::packed_highp>> vertexPositions;
+
+    std::vector<glm::vec3> vertexColors;
+
+    // the vertex facing is the normal
+    std::vector<GLubyte> vertexFacing;
+
+    // the indices must point to one of the textures
+    std::vector<GLubyte> textureIndices;
+
+    // this contains the indices of the quads in the vertex buffer
+    // the primitive mode is GL_TRIANGLES, so we need 6 indices for each quad
+    std::vector<GLuint> indexBuffer;
 
     Chunk(const glm::ivec3 &position,
           std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks,
@@ -107,6 +94,7 @@ class Chunk {
     Chunk::chunkSlice getSlice(unsigned int toSlice, Direction direction);
 
    private:
+    // the mesh should be
     void createMesh();
 
     void populateChunk();
