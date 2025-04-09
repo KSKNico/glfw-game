@@ -208,11 +208,47 @@ void Chunk::createMesh() {
                     if (block.type == Block::Type::AIR) {
                         continue;
                     }
-                    vertexPositions.push_back(glm::vec3(quad.first.x, quad.first.y, i));
-                    vertexColors.push_back(block.color);
-                    textureCoordinates.push_back(glm::vec2(quad.first.x, quad.first.y));
+
+                    if (direction == Direction::POS_X || direction == Direction::NEG_X) {
+                        vertexPositions.push_back(glm::vec3(i, quad.first.x, quad.first.y));
+                        vertexPositions.push_back(glm::vec3(i, quad.first.x, quad.second.y));
+                        vertexPositions.push_back(glm::vec3(i, quad.second.x, quad.second.y));
+                        vertexPositions.push_back(glm::vec3(i, quad.second.x, quad.first.y));
+                    } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
+                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.first.y));
+                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.second.y));
+                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.second.y));
+                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.first.y));
+                    } else {
+                        vertexPositions.push_back(glm::vec3(quad.first.x, quad.first.y, i));
+                        vertexPositions.push_back(glm::vec3(quad.first.x, quad.second.y, i));
+                        vertexPositions.push_back(glm::vec3(quad.second.x, quad.second.y, i));
+                        vertexPositions.push_back(glm::vec3(quad.second.x, quad.first.y, i));
+                    }
+
+                    textureIndices.push_back(block.type);
+                    textureIndices.push_back(block.type);
+                    textureIndices.push_back(block.type);
+                    textureIndices.push_back(block.type);
+
                     vertexFacing.push_back(static_cast<GLubyte>(direction));
-                    textureIndices.push_back(static_cast<GLubyte>(block.type));
+                    vertexFacing.push_back(static_cast<GLubyte>(direction));
+                    vertexFacing.push_back(static_cast<GLubyte>(direction));
+                    vertexFacing.push_back(static_cast<GLubyte>(direction));
+
+                    // first triangle
+                    indexBuffer.push_back(vertexPositions.size() - 4);
+                    indexBuffer.push_back(vertexPositions.size() - 3);
+                    indexBuffer.push_back(vertexPositions.size() - 2);
+
+                    // second triangle
+                    indexBuffer.push_back(vertexPositions.size() - 4);
+                    indexBuffer.push_back(vertexPositions.size() - 2);
+                    indexBuffer.push_back(vertexPositions.size() - 1);
+
+                    assert(textureIndices.size() == vertexPositions.size());
+                    assert(vertexFacing.size() == vertexPositions.size());
+                    assert(indexBuffer.size() % 6 == 0);
                 }
             }
         }

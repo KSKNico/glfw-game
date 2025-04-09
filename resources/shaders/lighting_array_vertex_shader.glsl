@@ -4,11 +4,9 @@ uniform mat4 MVP;
 uniform vec3 cameraVector;
 
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
-layout (location = 2) in uint aFacing;
-layout (location = 3) in uint aTextureIndex;
+layout (location = 1) in uint aFacing;
+layout (location = 2) in uint aTextureIndex;
 
-out vec2 TexCoord;
 out float Brightness;
 flat out uint TextureIndex;
 
@@ -21,7 +19,13 @@ mat3 normalVectors = mat3(
 void main()
 {
     gl_Position = MVP * vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
+
+    if (aFacing == 0)
+        TexCoord = vec2(aPos.y, aPos.z);
+    else if (aFacing == 1)
+        TexCoord = vec2(aPos.x, aPos.z);
+    else
+        TexCoord = vec2(aPos.x, aPos.y);
     Brightness = clamp(abs(dot(normalVectors[aFacing], cameraVector)), 0.6f, 1.0f);
     TextureIndex = aTextureIndex;
 };

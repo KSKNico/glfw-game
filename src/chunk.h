@@ -29,7 +29,6 @@ class Chunk {
 
     GLuint vao;
     GLuint vertexBuffer;
-    GLuint textureCoordinatesBuffer;
     GLuint vertexFacingBuffer;
     GLuint textureIndexBuffer;
 
@@ -71,8 +70,6 @@ class Chunk {
     Chunk(const Chunk &) = delete;
     Chunk(Chunk &&) = default;
     Chunk &operator=(const Chunk &) = delete;
-    GLint createVAO();
-    void deleteVAO();
 
     bool isVisible(const Block &block, Direction direction);
 

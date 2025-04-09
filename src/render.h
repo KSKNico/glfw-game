@@ -21,6 +21,7 @@
 #include "textureArray.h"
 #include "textureCubemap.h"
 #include "world.h"
+#include "chunk_vao.h"
 
 class Renderer {
    public:
@@ -30,9 +31,10 @@ class Renderer {
     void drawSkybox();
     void drawBlocks();
     void drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix);
+
+    // removes all VAOs from the map chunkVAOs that are not in world.chunks
     void unloadChunkVAOs();
 
-    void deleteChunkVAO(glm::ivec3 position);
     void createChunkVAO(Chunk& chunk);
 
     void setPerspectiveMatrix(int width, int height);
@@ -46,7 +48,7 @@ class Renderer {
     TextureArray blockTextures;
     Shader blockShader;
     Shader skyboxShader;
-    std::unordered_map<glm::ivec3, std::array<GLuint, 5>, IntegerVec3Hasher> chunkVAOs;
+    std::unordered_map<glm::ivec3, ChunkVAO, IntegerVec3Hasher> chunkVAOs;
 
     glm::mat4 perspectiveMatrix;
 };
