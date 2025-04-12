@@ -14,8 +14,10 @@
 #include "player.h"
 #include "skybox.h"
 #include "util.h"
+#include "camera.h"
+#include "globalDefinitions.h"
 
-const float GRAVITATION = 1.0f;
+constexpr float GRAVITATION = 1.0f;
 
 class World {
    public:
@@ -54,7 +56,8 @@ class World {
     /// @brief Updates the world by loading and unloading chunks
     void update();
 
-    static glm::ivec3 convertToChunkCoordinates(const glm::vec3 &position);
+    // returns the chunk coordinates of the chunk that the float vec3 position is in
+    static chunkCoordinates convertToChunkCoordinates(const glm::vec3 &position);
 
     void chunkLoader();
 };

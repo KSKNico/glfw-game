@@ -20,6 +20,9 @@ class Block {
 
         // global position of block in world
         glm::ivec3 position;
+
+        // position of the block in the chunk
+        glm::u8vec3 localPosition;
         bool hidden;
         Type type;
 

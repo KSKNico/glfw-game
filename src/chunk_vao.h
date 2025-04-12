@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glad.h"
+#define GLFW_INCLUDE_NONE
 #include <glm/vec3.hpp>
 #include <vector>
 

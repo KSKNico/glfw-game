@@ -15,6 +15,7 @@
 #include "integer_vec3_hasher.h"
 #include "perlin.h"
 #include "util.h"
+#include "globalDefinitions.h"
 
 class Chunk {
    public:
@@ -73,12 +74,12 @@ class Chunk {
 
     bool isVisible(const Block &block, Direction direction);
 
-    // returns true if the position is within the bounds of the chunk, the position must be in chunk coordinates
-    static bool isInside(const glm::ivec3 &blockPositionInChunk);
+    // returns true if the position is within the bounds of the chunk, the position must be in local coordinates
+    static bool isInside(const worldCoordinates &blockPositionInChunk);
 
     // returns the world coordinates of a block in the chunk
     // the block position must be in the range of [0, CHUNK_SIZE-1] for all dimensions
-    glm::ivec3 convertChunkToWorldCoordinates(const glm::ivec3 &blockPositionInChunk);
+    worldCoordinates convertChunkToWorldCoordinates(const localCoordinates &blockPositionInChunk);
 
     // this returns a quad mesh with the correct quads for one dimension
     quadMesh greedyMeshing(unsigned int sliceIndex, Direction direction);

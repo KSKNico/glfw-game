@@ -5,7 +5,7 @@ ChunkVAO::ChunkVAO(const std::vector<glm::u8vec3> &vertexPositions,
                    const std::vector<GLubyte> &textureIndices, 
                    const std::vector<GLuint> &indices) {
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);;
+    glBindVertexArray(vao);
 
     // vertex buffer
     glGenBuffers(1, &vertexBuffer);

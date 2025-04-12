@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     int ticks = 0;
     int nbFrames = 0;
 
-    std::thread chunkThread = std::thread(&World::chunkLoader, &world);
+    // std::thread chunkThread = std::thread(&World::chunkLoader, &world);
     // int timer = 0;
     renderer.init();
     while (!glfwWindowShouldClose(window)) {
@@ -80,6 +80,8 @@ int main(int argc, char* argv[]) {
             lastTick += 0.01;
             ticks++;
         }
+
+        world.update();
 
         glClearColor(0.1f, 0.2f, 0.3f, 0.5f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

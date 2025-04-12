@@ -8,6 +8,7 @@ layout (location = 1) in uint aFacing;
 layout (location = 2) in uint aTextureIndex;
 
 out float Brightness;
+out vec2 TexCoord;
 flat out uint TextureIndex;
 
 mat3 normalVectors = mat3(
@@ -20,9 +21,9 @@ void main()
 {
     gl_Position = MVP * vec4(aPos, 1.0);
 
-    if (aFacing == 0)
+    if (aFacing == 0u)
         TexCoord = vec2(aPos.y, aPos.z);
-    else if (aFacing == 1)
+    else if (aFacing == 1u)
         TexCoord = vec2(aPos.x, aPos.z);
     else
         TexCoord = vec2(aPos.x, aPos.y);

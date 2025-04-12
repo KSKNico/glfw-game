@@ -21,13 +21,15 @@ Chunk::~Chunk() {
     // TODO: this can create a segfault if the chunk is rendered while being deleted
 }
 
-glm::ivec3 Chunk::convertChunkToWorldCoordinates(const glm::ivec3 &blockPositionInChunk) {
+worldCoordinates Chunk::convertChunkToWorldCoordinates(const localCoordinates &blockPositionInChunk) {
     assert(isInside(blockPositionInChunk));
 
-    return position * (int)Chunk::CHUNK_SIZE + blockPositionInChunk;
+    return position * (int)Chunk::CHUNK_SIZE + (worldCoordinates) blockPositionInChunk;
 }
 
 void Chunk::populateChunk() {
+    static_assert (CHUNK_SIZE <= 255, "CHUNK_SIZE must be greater than 0");
+
     static std::random_device rd;   // obtain a random number from hardware
     static std::mt19937 gen(rd());  // seed the generator
     static std::uniform_int_distribution<> distr(0, 99);
@@ -55,12 +57,13 @@ void Chunk::populateChunk() {
                 }
                 blocks[x][y][z].type = blockType;
                 blocks[x][y][z].position = blockPosition;
+                blocks[x][y][z].localPosition = glm::u8vec3(x, y, z);
             }
         }
     }
 }
 
-bool Chunk::isInside(const glm::ivec3 &blockPositionInChunk) {
+bool Chunk::isInside(const worldCoordinates &blockPositionInChunk) {
     return blockPositionInChunk.x >= 0 && blockPositionInChunk.x < Chunk::CHUNK_SIZE && blockPositionInChunk.y >= 0 && blockPositionInChunk.y < Chunk::CHUNK_SIZE && blockPositionInChunk.z >= 0 && blockPositionInChunk.z < Chunk::CHUNK_SIZE;
 }
 
@@ -71,7 +74,7 @@ bool Chunk::isVisible(const Block &block, Direction direction) {
     }
 
     // if it is inside the chunk, check if the other block is air
-    auto otherBlockPosition = block.position + DIRECTION_VECTORS[static_cast<int>(direction)];
+    auto otherBlockPosition = (worldCoordinates) block.localPosition + DIRECTION_VECTORS[static_cast<int>(direction)];
     if (isInside(otherBlockPosition)) {
         // the simple case where can simply look at the other block because we stay in the same chunk
         return this->blocks[otherBlockPosition.x][otherBlockPosition.y][otherBlockPosition.z].type == Block::Type::AIR;
@@ -98,16 +101,30 @@ Block Chunk::getBlockBySlice(int s, int i, int k, Direction direction) {
     }
 }
 
-// returns true if the position is inside the quad
-static bool isPositionInQuad(const Chunk::quad q, const glm::u8vec2 p) {
+// filters out the direction from the position in the slice
+static glm::u8vec2 get2DPositionInSlice(const glm::u8vec3 position, Direction direction) {
+    // get the quad in the slice
+    if (direction == Direction::POS_X || direction == Direction::NEG_X) {
+        return {position.y, position.z};
+    } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
+        return {position.x, position.z};
+    } else {
+        return {position.x, position.y};
+    }
+}
+
+// returns true if the position p is inside the quad q
+// the quad has 2D coordinates unlike the quads used for rendering
+static bool isPositionInQuad(const std::pair<glm::u8vec2, glm::u8vec2> q, const glm::u8vec2 p) {
     // simply check if the position p is inside the quad q
     return p.x >= q.first.x && p.x <= q.second.x && p.y >= q.first.y && p.y <= q.second.y;
 }
 
-// returns true if the position of the slice has already been meshed
-static bool isPositionMeshed(Chunk::quadMesh &quads, int i, int k) {
+// returns true if the position {i,k} of the slice has already been meshed
+// this requires the direction from which the slice is viewed and the already meshed quads
+static bool isPositionMeshed(Chunk::quadMesh &quads, int i, int k, Direction direction) {
     for (auto &quad : quads) {
-        if (isPositionInQuad(quad, {i, k})) {
+        if (isPositionInQuad({get2DPositionInSlice(quad.first, direction), get2DPositionInSlice(quad.second, direction)}, {i, k})) {
             return true;
         }
     }
@@ -119,76 +136,69 @@ Chunk::quadMesh Chunk::greedyMeshing(unsigned int sliceIndex, Direction directio
     // if you hit a block that can't be included in the quad, move in y direction
     quadMesh quads;
 
-    auto currentX = 0;
-    auto currentY = 0;
     auto currentType = Block::Type::AIR;
 
-    while (true) {
-        auto found = false;
-        // try to find a quad to expand from
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            for (int i = 0; i < CHUNK_SIZE; i++) {
-                if (isPositionMeshed(quads, i, j)) {
-                    continue;
-                }
-
-                currentX = i;
-                currentY = j;
-                found = false;
-                break;
+    // try to find a quad to expand from
+    for (int y = 0; y < CHUNK_SIZE; y++) {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            if (isPositionMeshed(quads, x, y, direction)) {
+                continue;
             }
-        }
 
-        if (!found) {
-            break;
-        }
-
-        auto block = getBlockBySlice(sliceIndex, currentX, currentY, direction);
-        currentType = block.type;
-        if (!isVisible(block, direction)) {
-            continue;
-        }
-
-        // find the width of the quad
-        auto width = 1;
-        while (currentX + width < Chunk::CHUNK_SIZE) {
-            auto otherBlock = getBlockBySlice(sliceIndex, currentX + width, currentY, direction);
-            if (!isVisible(otherBlock, direction) ||
-                otherBlock.type != currentType ||
-                isPositionMeshed(quads, currentX + width, currentY)) {
-                break;
+            auto block = getBlockBySlice(sliceIndex, x, y, direction);
+            currentType = block.type;
+            if (!isVisible(block, direction)) {
+                continue;
             }
-            width++;
-        }
-
-        // find the height of the quad
-        auto height = 1;
-        while (currentY + height < Chunk::CHUNK_SIZE) {
-            bool canExpand = true;
-            for (int i = 0; i < width; i++) {
-                auto otherBlock = getBlockBySlice(sliceIndex, currentX + i, currentY + height, direction);
+    
+            // find the width of the quad
+            auto width = 1;
+            while (x + width < Chunk::CHUNK_SIZE) {
+                auto otherBlock = getBlockBySlice(sliceIndex, x + width, y, direction);
                 if (!isVisible(otherBlock, direction) ||
                     otherBlock.type != currentType ||
-                    isPositionMeshed(quads, currentX + i, currentY + height)) {
-                    canExpand = false;
+                    isPositionMeshed(quads, x + width, y, direction)) {
                     break;
                 }
+                width++;
             }
-            if (!canExpand) {
-                break;
+    
+            // find the height of the quad
+            auto height = 1;
+            while (y + height < Chunk::CHUNK_SIZE) {
+                bool canExpand = true;
+                for (int i = 0; i < width; i++) {
+                    auto otherBlock = getBlockBySlice(sliceIndex, x + i, y + height, direction);
+                    if (!isVisible(otherBlock, direction) ||
+                        otherBlock.type != currentType ||
+                        isPositionMeshed(quads, x + i, y + height, direction)) {
+                        canExpand = false;
+                        break;
+                    }
+                }
+                if (!canExpand) {
+                    break;
+                }
+                height++;
             }
-            height++;
-        }
-
-        // add the quad to the list
-        if (direction == Direction::NEG_X || direction == Direction::POS_X) {
-            quads.push_back(quad({sliceIndex, currentX, currentY}, {sliceIndex, currentX + width - 1, currentY + height - 1}));
-        } else if (direction == Direction::NEG_Y || direction == Direction::POS_Y) {
-            quads.push_back(quad({currentX, sliceIndex, currentY}, {currentX + width - 1, sliceIndex, currentY + height - 1}));
-        } else {
-            quads.push_back(quad({currentX, currentY, sliceIndex}, {currentX + width - 1, currentY + height - 1, sliceIndex}));
+    
+            // add the quad to the list
+            if (direction == Direction::POS_X) {
+                quads.push_back(quad({sliceIndex + 1, x, y}, {sliceIndex + 1, x + width - 1, y + height - 1}));
+            } else if (direction == Direction::NEG_X) {
+                quads.push_back(quad({sliceIndex, x, y}, {sliceIndex, x + width - 1, y + height - 1}));
+            } else if (direction == Direction::POS_Y) {
+                quads.push_back(quad({x, sliceIndex + 1, y}, {x + width - 1, sliceIndex + 1, y + height - 1}));
+            } else if (direction == Direction::NEG_Y) {
+                quads.push_back(quad({x, sliceIndex, y}, {x + width - 1, sliceIndex, y + height - 1}));
+            } else if (direction == Direction::POS_Z) {
+                quads.push_back(quad({x, y, sliceIndex + 1}, {x + width - 1, y + height - 1, sliceIndex + 1}));
+            } else {
+                quads.push_back(quad({x, y, sliceIndex}, {x + width - 1, y + height - 1, sliceIndex}));
+            }
         }
     }
+
     return quads;
 }
 
