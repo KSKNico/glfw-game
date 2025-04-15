@@ -134,7 +134,7 @@ static bool isPositionMeshed(Chunk::quadMesh &quads, int i, int k, Direction dir
 Chunk::quadMesh Chunk::greedyMeshing(unsigned int sliceIndex, Direction direction) {
     // start with the lowest y coordinate first and expand to the right (increase x)
     // if you hit a block that can't be included in the quad, move in y direction
-    quadMesh quads;
+    Chunk::quadMesh quads;
 
     auto currentType = Block::Type::AIR;
 
@@ -181,20 +181,20 @@ Chunk::quadMesh Chunk::greedyMeshing(unsigned int sliceIndex, Direction directio
                 }
                 height++;
             }
-    
+
             // add the quad to the list
             if (direction == Direction::POS_X) {
-                quads.push_back(quad({sliceIndex + 1, x, y}, {sliceIndex + 1, x + width - 1, y + height - 1}));
+                quads.push_back(Quad({sliceIndex + 1, x, y}, {sliceIndex + 1, x + width - 1, y + height - 1}, currentType));
             } else if (direction == Direction::NEG_X) {
-                quads.push_back(quad({sliceIndex, x, y}, {sliceIndex, x + width - 1, y + height - 1}));
+                quads.push_back(Quad({sliceIndex, x, y}, {sliceIndex, x + width - 1, y + height - 1}, currentType));
             } else if (direction == Direction::POS_Y) {
-                quads.push_back(quad({x, sliceIndex + 1, y}, {x + width - 1, sliceIndex + 1, y + height - 1}));
+                quads.push_back(Quad({x, sliceIndex + 1, y}, {x + width - 1, sliceIndex + 1, y + height - 1}, currentType));
             } else if (direction == Direction::NEG_Y) {
-                quads.push_back(quad({x, sliceIndex, y}, {x + width - 1, sliceIndex, y + height - 1}));
+                quads.push_back(Quad({x, sliceIndex, y}, {x + width - 1, sliceIndex, y + height - 1}, currentType));
             } else if (direction == Direction::POS_Z) {
-                quads.push_back(quad({x, y, sliceIndex + 1}, {x + width - 1, y + height - 1, sliceIndex + 1}));
+                quads.push_back(Quad({x, y, sliceIndex + 1}, {x + width - 1, y + height - 1, sliceIndex + 1}, currentType));
             } else {
-                quads.push_back(quad({x, y, sliceIndex}, {x + width - 1, y + height - 1, sliceIndex}));
+                quads.push_back(Quad({x, y, sliceIndex}, {x + width - 1, y + height - 1, sliceIndex}, currentType));
             }
         }
     }
@@ -214,10 +214,10 @@ void Chunk::createMesh() {
                 auto slice = greedyMeshing(i, direction);
                 for (auto &quad : slice) {
                     // add the quad to the mesh
-                    auto block = getBlockBySlice(i, quad.first.x, quad.first.y, direction);
+                    /* auto block = getBlockBySlice(i, quad.first.x, quad.first.y, direction);
                     if (block.type == Block::Type::AIR) {
                         continue;
-                    }
+                    } */
 
                     if (direction == Direction::POS_X || direction == Direction::NEG_X) {
                         vertexPositions.push_back(glm::vec3(i, quad.first.x, quad.first.y));
@@ -236,10 +236,10 @@ void Chunk::createMesh() {
                         vertexPositions.push_back(glm::vec3(quad.second.x, quad.first.y, i));
                     }
 
-                    textureIndices.push_back(block.type);
-                    textureIndices.push_back(block.type);
-                    textureIndices.push_back(block.type);
-                    textureIndices.push_back(block.type);
+                    textureIndices.push_back(quad.textureIndex);
+                    textureIndices.push_back(quad.textureIndex);
+                    textureIndices.push_back(quad.textureIndex);
+                    textureIndices.push_back(quad.textureIndex);
 
                     vertexFacing.push_back(static_cast<GLubyte>(direction));
                     vertexFacing.push_back(static_cast<GLubyte>(direction));

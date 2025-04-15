@@ -35,16 +35,18 @@ void Renderer::unloadChunkVAOs() {
     world.chunkMutex.unlock();
 }
 
-void Renderer::createChunkVAO(Chunk& chunk) {
-    auto chunkVAO = ChunkVAO(
-        chunk.vertexPositions,
-        chunk.vertexFacing,
-        chunk.textureIndices,
-        chunk.indexBuffer
+void Renderer::createChunkVAO(const Chunk& chunk) {
+    // Construct the ChunkVAO directly in the map using emplace
+    chunkVAOs.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(chunk.position),
+        std::forward_as_tuple(
+            chunk.vertexPositions,
+            chunk.vertexFacing,
+            chunk.textureIndices,
+            chunk.indexBuffer
+        )
     );
-
-    // add it to the VAO map, use copy operations
-    chunkVAOs.insert({chunk.position, chunkVAO});
 }
 
 void Renderer::drawSkybox() {

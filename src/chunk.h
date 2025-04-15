@@ -17,15 +17,25 @@
 #include "util.h"
 #include "globalDefinitions.h"
 
+class Quad {
+    public:
+     glm::u8vec3 first;
+     glm::u8vec3 second;
+     unsigned int textureIndex;
+
+    Quad(const glm::u8vec3 &first, const glm::u8vec3 &second, unsigned int textureIndex)
+    : first(first), second(second), textureIndex(textureIndex) {}
+};
+
 class Chunk {
    public:
+   // chunks are 3D arrays of blocks
     static constexpr unsigned char CHUNK_SIZE = 16;
     static constexpr std::array<glm::ivec3, 6> ADJACENT_CHUNK_POSITIONS = {
         glm::ivec3(0, 0, 1), glm::ivec3(0, 0, -1), glm::ivec3(0, 1, 0),
         glm::ivec3(0, -1, 0), glm::ivec3(1, 0, 0), glm::ivec3(-1, 0, 0)};
 
-    using quad = std::pair<glm::u8vec3, glm::u8vec3>;
-    using quadMesh = std::vector<quad>;
+    using quadMesh = std::vector<Quad>;
     using chunkSlice = std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>;
 
     GLuint vao;
@@ -37,14 +47,12 @@ class Chunk {
 
     // position is in chunk coordiantes, world coordinates are position * CHUNK_SIZE
     glm::ivec3 position;
-    std::array<glm::ivec3, 8>
-        chunkVertices;
+    std::array<glm::ivec3, 8> chunkVertices;
 
     std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks;
 
     unsigned int worldSeed;
-    std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE>
-        blocks;
+    std::array<std::array<std::array<Block, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> blocks;
     std::mutex &chunkMutex;
 
     std::vector<glm::vec<3, GLubyte, glm::packed_highp>> vertexPositions;
