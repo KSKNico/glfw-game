@@ -19,7 +19,10 @@
 
 class Quad {
     public:
+     // this is the first corner of the quad in chunk local coordinates [0, CHUNK_SIZE]
      glm::u8vec3 first;
+
+     // this is the second corner of the quad in chunk local coordinates [0, CHUNK_SIZE]
      glm::u8vec3 second;
      unsigned int textureIndex;
 

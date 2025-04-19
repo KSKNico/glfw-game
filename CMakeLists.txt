@@ -31,7 +31,8 @@ add_executable(
   src/util.cpp
   src/integer_vec3_hasher.cpp
   src/std_image.cpp
-  src/chunk_vao.cpp)
+  src/chunk_vao.cpp
+  src/exporter.cpp)
 
 option(LLVM_SANITIZE "Enable LLVM sanitizers" ON)
 if (${LLVM_SANITIZE})

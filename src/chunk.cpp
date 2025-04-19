@@ -1,5 +1,7 @@
 #include "chunk.h"
 
+#include "exporter.h"
+
 Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::unique_ptr<Chunk>, IntegerVec3Hasher> &chunks, unsigned int worldSeed, std::mutex &chunkMutex) : position(position), chunks(chunks), worldSeed(worldSeed), chunkMutex(chunkMutex) {
     // std::cout << "Created chunk at position " << position[0] << " " << position[1] << " " << position[2] << std::endl;
     this->populateChunk();
@@ -13,6 +15,8 @@ Chunk::Chunk(const glm::ivec3 &position, std::unordered_map<glm::ivec3, std::uni
     chunkVertices[5] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, 0, Chunk::CHUNK_SIZE);
     chunkVertices[6] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
     chunkVertices[7] = position * (int)Chunk::CHUNK_SIZE + glm::ivec3(0, Chunk::CHUNK_SIZE, Chunk::CHUNK_SIZE);
+
+    // exportToOBJ(vertexPositions, indexBuffer, "chunk_" + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
 }
 
 Chunk::~Chunk() {
@@ -22,13 +26,11 @@ Chunk::~Chunk() {
 }
 
 worldCoordinates Chunk::convertChunkToWorldCoordinates(const localCoordinates &blockPositionInChunk) {
-    assert(isInside(blockPositionInChunk));
-
     return position * (int)Chunk::CHUNK_SIZE + (worldCoordinates) blockPositionInChunk;
 }
 
 void Chunk::populateChunk() {
-    static_assert (CHUNK_SIZE <= 255, "CHUNK_SIZE must be greater than 0");
+    static_assert (CHUNK_SIZE <= 255, "CHUNK_SIZE must be smaller than 256");
 
     static std::random_device rd;   // obtain a random number from hardware
     static std::mt19937 gen(rd());  // seed the generator
@@ -184,17 +186,17 @@ Chunk::quadMesh Chunk::greedyMeshing(unsigned int sliceIndex, Direction directio
 
             // add the quad to the list
             if (direction == Direction::POS_X) {
-                quads.push_back(Quad({sliceIndex + 1, x, y}, {sliceIndex + 1, x + width - 1, y + height - 1}, currentType));
+                quads.push_back(Quad({sliceIndex + 1, x, y}, {sliceIndex + 1, x + width, y + height}, currentType));
             } else if (direction == Direction::NEG_X) {
-                quads.push_back(Quad({sliceIndex, x, y}, {sliceIndex, x + width - 1, y + height - 1}, currentType));
+                quads.push_back(Quad({sliceIndex, x, y}, {sliceIndex, x + width, y + height}, currentType));
             } else if (direction == Direction::POS_Y) {
-                quads.push_back(Quad({x, sliceIndex + 1, y}, {x + width - 1, sliceIndex + 1, y + height - 1}, currentType));
+                quads.push_back(Quad({x, sliceIndex + 1, y}, {x + width, sliceIndex + 1, y + height}, currentType));
             } else if (direction == Direction::NEG_Y) {
-                quads.push_back(Quad({x, sliceIndex, y}, {x + width - 1, sliceIndex, y + height - 1}, currentType));
+                quads.push_back(Quad({x, sliceIndex, y}, {x + width, sliceIndex, y + height}, currentType));
             } else if (direction == Direction::POS_Z) {
-                quads.push_back(Quad({x, y, sliceIndex + 1}, {x + width - 1, y + height - 1, sliceIndex + 1}, currentType));
+                quads.push_back(Quad({x, y, sliceIndex + 1}, {x + width, y + height, sliceIndex + 1}, currentType));
             } else {
-                quads.push_back(Quad({x, y, sliceIndex}, {x + width - 1, y + height - 1, sliceIndex}, currentType));
+                quads.push_back(Quad({x, y, sliceIndex}, {x + width, y + height, sliceIndex}, currentType));
             }
         }
     }
@@ -220,15 +222,15 @@ void Chunk::createMesh() {
                     } */
 
                     if (direction == Direction::POS_X || direction == Direction::NEG_X) {
-                        vertexPositions.push_back(glm::vec3(i, quad.first.x, quad.first.y));
-                        vertexPositions.push_back(glm::vec3(i, quad.first.x, quad.second.y));
-                        vertexPositions.push_back(glm::vec3(i, quad.second.x, quad.second.y));
-                        vertexPositions.push_back(glm::vec3(i, quad.second.x, quad.first.y));
+                        vertexPositions.push_back(glm::vec3(i, quad.first.y, quad.first.z));
+                        vertexPositions.push_back(glm::vec3(i, quad.first.y, quad.second.z));
+                        vertexPositions.push_back(glm::vec3(i, quad.second.y, quad.second.z));
+                        vertexPositions.push_back(glm::vec3(i, quad.second.y, quad.first.z));
                     } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
-                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.first.y));
-                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.second.y));
-                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.second.y));
-                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.first.y));
+                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.first.z));
+                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.second.z));
+                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.second.z));
+                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.first.z));
                     } else {
                         vertexPositions.push_back(glm::vec3(quad.first.x, quad.first.y, i));
                         vertexPositions.push_back(glm::vec3(quad.first.x, quad.second.y, i));
@@ -246,15 +248,27 @@ void Chunk::createMesh() {
                     vertexFacing.push_back(static_cast<GLubyte>(direction));
                     vertexFacing.push_back(static_cast<GLubyte>(direction));
 
-                    // first triangle
-                    indexBuffer.push_back(vertexPositions.size() - 4);
-                    indexBuffer.push_back(vertexPositions.size() - 3);
-                    indexBuffer.push_back(vertexPositions.size() - 2);
+                    /*
 
-                    // second triangle
-                    indexBuffer.push_back(vertexPositions.size() - 4);
-                    indexBuffer.push_back(vertexPositions.size() - 2);
-                    indexBuffer.push_back(vertexPositions.size() - 1);
+                        1--------2
+                        |        |
+                        |        |
+                        |        |
+                        |        |
+                        0--------3
+
+                    */
+                    // first triangle CCW
+                    // 0 3 1
+                    indexBuffer.push_back(vertexPositions.size() - 4); // 0
+                    indexBuffer.push_back(vertexPositions.size() - 1); // 3
+                    indexBuffer.push_back(vertexPositions.size() - 3); // 1
+
+                    // second triangle CCW
+                    // 2 1 3
+                    indexBuffer.push_back(vertexPositions.size() - 2); // 2
+                    indexBuffer.push_back(vertexPositions.size() - 3); // 1
+                    indexBuffer.push_back(vertexPositions.size() - 1); // 3
 
                     assert(textureIndices.size() == vertexPositions.size());
                     assert(vertexFacing.size() == vertexPositions.size());
