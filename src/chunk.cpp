@@ -57,7 +57,9 @@ void Chunk::populateChunk() {
                 } else if (noise_2 > threshold * 1.1f) {
                     blockType = Block::Type::PURPLE_STONE;
                 }
-                blocks[x][y][z].type = blockType;
+                // TODO: for debugging only
+                blocks[x][y][z].type = Block::Type::RED_STONE;
+                // blocks[x][y][z].type = blockType;
                 blocks[x][y][z].position = blockPosition;
                 blocks[x][y][z].localPosition = glm::u8vec3(x, y, z);
             }
@@ -83,12 +85,14 @@ bool Chunk::isVisible(const Block &block, Direction direction) {
     } else {
         // we need to access the other chunk
         auto otherChunkPosition = position + DIRECTION_VECTORS[static_cast<int>(direction)];
-        otherBlockPosition.x = otherBlockPosition.x % Chunk::CHUNK_SIZE;
-        otherBlockPosition.y = otherBlockPosition.y % Chunk::CHUNK_SIZE;
-        otherBlockPosition.z = otherBlockPosition.z % Chunk::CHUNK_SIZE;
         if (chunks.find(otherChunkPosition) == chunks.end()) {
             return true;
         }
+
+        // the chunk does exist, so we need to check the specific block
+        otherBlockPosition.x = (otherBlockPosition.x % Chunk::CHUNK_SIZE + Chunk::CHUNK_SIZE) % Chunk::CHUNK_SIZE;
+        otherBlockPosition.y = (otherBlockPosition.y % Chunk::CHUNK_SIZE + Chunk::CHUNK_SIZE) % Chunk::CHUNK_SIZE;
+        otherBlockPosition.z = (otherBlockPosition.z % Chunk::CHUNK_SIZE + Chunk::CHUNK_SIZE) % Chunk::CHUNK_SIZE;
         return chunks.at(otherChunkPosition)->blocks[otherBlockPosition.x][otherBlockPosition.y][otherBlockPosition.z].type == Block::Type::AIR;
     }
 }
@@ -184,6 +188,8 @@ Chunk::quadMesh Chunk::greedyMeshing(unsigned int sliceIndex, Direction directio
                 height++;
             }
 
+            std::cout << "Found quad at " << x << " " << y << " " << " at slice " << sliceIndex << " with size " << width << "x" << height << std::endl;
+
             // add the quad to the list
             if (direction == Direction::POS_X) {
                 quads.push_back(Quad({sliceIndex + 1, x, y}, {sliceIndex + 1, x + width, y + height}, currentType));
@@ -211,69 +217,69 @@ void Chunk::createMesh() {
 
     for (size_t dir = 0; dir < (size_t)DIRECTION_VECTORS.size(); dir++) {
         auto direction = static_cast<Direction>(dir);
-        for (int i = 0; i < Chunk::CHUNK_SIZE; i++) {
-            for (int k = 0; k < Chunk::CHUNK_SIZE; k++) {
-                auto slice = greedyMeshing(i, direction);
-                for (auto &quad : slice) {
-                    // add the quad to the mesh
-                    /* auto block = getBlockBySlice(i, quad.first.x, quad.first.y, direction);
-                    if (block.type == Block::Type::AIR) {
-                        continue;
-                    } */
-
-                    if (direction == Direction::POS_X || direction == Direction::NEG_X) {
-                        vertexPositions.push_back(glm::vec3(i, quad.first.y, quad.first.z));
-                        vertexPositions.push_back(glm::vec3(i, quad.first.y, quad.second.z));
-                        vertexPositions.push_back(glm::vec3(i, quad.second.y, quad.second.z));
-                        vertexPositions.push_back(glm::vec3(i, quad.second.y, quad.first.z));
-                    } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
-                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.first.z));
-                        vertexPositions.push_back(glm::vec3(quad.first.x, i, quad.second.z));
-                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.second.z));
-                        vertexPositions.push_back(glm::vec3(quad.second.x, i, quad.first.z));
-                    } else {
-                        vertexPositions.push_back(glm::vec3(quad.first.x, quad.first.y, i));
-                        vertexPositions.push_back(glm::vec3(quad.first.x, quad.second.y, i));
-                        vertexPositions.push_back(glm::vec3(quad.second.x, quad.second.y, i));
-                        vertexPositions.push_back(glm::vec3(quad.second.x, quad.first.y, i));
-                    }
-
-                    textureIndices.push_back(quad.textureIndex);
-                    textureIndices.push_back(quad.textureIndex);
-                    textureIndices.push_back(quad.textureIndex);
-                    textureIndices.push_back(quad.textureIndex);
-
-                    vertexFacing.push_back(static_cast<GLubyte>(direction));
-                    vertexFacing.push_back(static_cast<GLubyte>(direction));
-                    vertexFacing.push_back(static_cast<GLubyte>(direction));
-                    vertexFacing.push_back(static_cast<GLubyte>(direction));
-
-                    /*
-
-                        1--------2
-                        |        |
-                        |        |
-                        |        |
-                        |        |
-                        0--------3
-
-                    */
-                    // first triangle CCW
-                    // 0 3 1
-                    indexBuffer.push_back(vertexPositions.size() - 4); // 0
-                    indexBuffer.push_back(vertexPositions.size() - 1); // 3
-                    indexBuffer.push_back(vertexPositions.size() - 3); // 1
-
-                    // second triangle CCW
-                    // 2 1 3
-                    indexBuffer.push_back(vertexPositions.size() - 2); // 2
-                    indexBuffer.push_back(vertexPositions.size() - 3); // 1
-                    indexBuffer.push_back(vertexPositions.size() - 1); // 3
-
-                    assert(textureIndices.size() == vertexPositions.size());
-                    assert(vertexFacing.size() == vertexPositions.size());
-                    assert(indexBuffer.size() % 6 == 0);
+        for (int s = 0; s < Chunk::CHUNK_SIZE; s++) {
+            auto slice = greedyMeshing(s, direction);
+            for (auto &quad : slice) {
+                if (direction == Direction::POS_X || direction == Direction::NEG_X) {
+                    vertexPositions.push_back(glm::u8vec3(s, quad.first.y, quad.first.z));
+                    vertexPositions.push_back(glm::u8vec3(s, quad.first.y, quad.second.z));
+                    vertexPositions.push_back(glm::u8vec3(s, quad.second.y, quad.second.z));
+                    vertexPositions.push_back(glm::u8vec3(s, quad.second.y, quad.first.z));
+                } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, s, quad.first.z));
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, s, quad.second.z));
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, s, quad.second.z));
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, s, quad.first.z));
+                } else {
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, s));
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, s));
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.second.y, s));
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, s));
                 }
+
+                textureIndices.push_back(quad.textureIndex);
+                textureIndices.push_back(quad.textureIndex);
+                textureIndices.push_back(quad.textureIndex);
+                textureIndices.push_back(quad.textureIndex);
+
+                GLubyte facing;
+                if (direction == Direction::POS_X || direction == Direction::NEG_X) {
+                    facing = 0;
+                } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
+                    facing = 1;
+                } else {
+                    facing = 2;
+                }
+                vertexFacing.push_back(facing);
+                vertexFacing.push_back(facing);
+                vertexFacing.push_back(facing);
+                vertexFacing.push_back(facing);
+
+                /*
+
+                    1--------2
+                    |        |
+                    |        |
+                    |        |
+                    |        |
+                    0--------3
+
+                */
+                // first triangle CCW
+                // 0 3 1
+                indexBuffer.push_back(vertexPositions.size() - 4); // 0
+                indexBuffer.push_back(vertexPositions.size() - 1); // 3
+                indexBuffer.push_back(vertexPositions.size() - 3); // 1
+
+                // second triangle CCW
+                // 2 1 3
+                indexBuffer.push_back(vertexPositions.size() - 2); // 2
+                indexBuffer.push_back(vertexPositions.size() - 3); // 1
+                indexBuffer.push_back(vertexPositions.size() - 1); // 3
+
+                assert(textureIndices.size() == vertexPositions.size());
+                assert(vertexFacing.size() == vertexPositions.size());
+                assert(indexBuffer.size() % 6 == 0);
             }
         }
     }
