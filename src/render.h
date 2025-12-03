@@ -35,7 +35,7 @@ class Renderer {
     // removes all VAOs from the map chunkVAOs that are not in world.chunks
     void unloadChunkVAOs();
 
-    void createChunkVAO(const Chunk& chunk);
+    bool createChunkVAO(const Chunk& chunk);
 
     void setPerspectiveMatrix(int width, int height);
 

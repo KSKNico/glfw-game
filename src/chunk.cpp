@@ -57,9 +57,18 @@ void Chunk::populateChunk() {
                 } else if (noise_2 > threshold * 1.1f) {
                     blockType = Block::Type::PURPLE_STONE;
                 }
-                // TODO: for debugging only
-                blocks[x][y][z].type = Block::Type::RED_STONE;
-                // blocks[x][y][z].type = blockType;
+
+                if (position == glm::ivec3(0, 0, 0)) {
+                    if (y % 3 == 0) {
+                        blockType = Block::Type::RED_STONE;
+                    } else {
+                        blockType = Block::Type::AIR;
+                    }
+                } else {
+                    blockType = Block::Type::AIR;
+                }
+
+                blocks[x][y][z].type = blockType;
                 blocks[x][y][z].position = blockPosition;
                 blocks[x][y][z].localPosition = glm::u8vec3(x, y, z);
             }
@@ -188,7 +197,7 @@ Chunk::quadMesh Chunk::greedyMeshing(unsigned int sliceIndex, Direction directio
                 height++;
             }
 
-            std::cout << "Found quad at " << x << " " << y << " " << " at slice " << sliceIndex << " with size " << width << "x" << height << std::endl;
+            // std::cout << "Found quad at " << x << " " << y << " " << " at slice " << sliceIndex << " with size " << width << "x" << height << std::endl;
 
             // add the quad to the list
             if (direction == Direction::POS_X) {
@@ -220,21 +229,43 @@ void Chunk::createMesh() {
         for (int s = 0; s < Chunk::CHUNK_SIZE; s++) {
             auto slice = greedyMeshing(s, direction);
             for (auto &quad : slice) {
-                if (direction == Direction::POS_X || direction == Direction::NEG_X) {
-                    vertexPositions.push_back(glm::u8vec3(s, quad.first.y, quad.first.z));
-                    vertexPositions.push_back(glm::u8vec3(s, quad.first.y, quad.second.z));
-                    vertexPositions.push_back(glm::u8vec3(s, quad.second.y, quad.second.z));
-                    vertexPositions.push_back(glm::u8vec3(s, quad.second.y, quad.first.z));
-                } else if (direction == Direction::POS_Y || direction == Direction::NEG_Y) {
-                    vertexPositions.push_back(glm::u8vec3(quad.first.x, s, quad.first.z));
-                    vertexPositions.push_back(glm::u8vec3(quad.first.x, s, quad.second.z));
-                    vertexPositions.push_back(glm::u8vec3(quad.second.x, s, quad.second.z));
-                    vertexPositions.push_back(glm::u8vec3(quad.second.x, s, quad.first.z));
-                } else {
-                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, s));
-                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, s));
-                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.second.y, s));
-                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, s));
+                // Vertices ordered so indices (0,3,1) and (2,1,3) form CCW triangles from outside
+                if (direction == Direction::POS_X) {
+                    // Right face (+X): Y up, Z right when looking from outside
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.second.z));  // 0: bottom-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, quad.second.z)); // 1: top-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, quad.first.z));  // 2: top-left
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.first.z));   // 3: bottom-left
+                } else if (direction == Direction::NEG_X) {
+                    // Left face (-X): Y up, Z left when looking from outside
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.first.z));   // 0: bottom-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, quad.first.z));  // 1: top-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, quad.second.z)); // 2: top-left
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.second.z));  // 3: bottom-left
+                } else if (direction == Direction::POS_Y) {
+                    // Top face (+Y): Z up, X right when looking from outside (from above)
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, quad.first.z));  // 0: bottom-right
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, quad.second.z)); // 1: top-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.second.z));  // 2: top-left
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.first.z));   // 3: bottom-left
+                } else if (direction == Direction::NEG_Y) {
+                    // Bottom face (-Y): Z down, X right when looking from outside (from below)
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.first.z));   // 0: bottom-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.second.z));  // 1: top-right
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, quad.second.z)); // 2: top-left
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, quad.first.z));  // 3: bottom-left
+                } else if (direction == Direction::POS_Z) {
+                    // Front face (+Z): Y up, X right when looking from outside
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.first.z));   // 0: bottom-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, quad.first.z));  // 1: top-right
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.second.y, quad.first.z)); // 2: top-left
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, quad.first.z));  // 3: bottom-left
+                } else { // NEG_Z
+                    // Back face (-Z): Y up, X left when looking from outside
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.first.y, quad.first.z));  // 0: bottom-right
+                    vertexPositions.push_back(glm::u8vec3(quad.second.x, quad.second.y, quad.first.z)); // 1: top-right
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.second.y, quad.first.z));  // 2: top-left
+                    vertexPositions.push_back(glm::u8vec3(quad.first.x, quad.first.y, quad.first.z));   // 3: bottom-left
                 }
 
                 textureIndices.push_back(quad.textureIndex);

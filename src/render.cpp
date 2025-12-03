@@ -35,8 +35,14 @@ void Renderer::unloadChunkVAOs() {
     world.chunkMutex.unlock();
 }
 
-void Renderer::createChunkVAO(const Chunk& chunk) {
+bool Renderer::createChunkVAO(const Chunk& chunk) {
     // Construct the ChunkVAO directly in the map using emplace
+    if (chunk.vertexPositions.empty() || chunk.indexBuffer.empty()) {
+        return false;
+    }
+
+    std::cout << "Creating VAO for chunk at position " << chunk.position.x << " " << chunk.position.y << " " << chunk.position.z << " with " << chunk.indexBuffer.size() << " indices." << std::endl;
+
     chunkVAOs.emplace(
         std::piecewise_construct,
         std::forward_as_tuple(chunk.position),
@@ -47,6 +53,7 @@ void Renderer::createChunkVAO(const Chunk& chunk) {
             chunk.indexBuffer
         )
     );
+    return true;
 }
 
 void Renderer::drawSkybox() {
@@ -66,6 +73,7 @@ void Renderer::drawSkybox() {
 }
 
 void Renderer::drawChunk(Chunk& chunk, const glm::mat4& viewProjectionMatrix) {
+    // std::cout << "Drawing chunk at position " << chunk.position.x << " " << chunk.position.y << " " << chunk.position.z << " with " << chunk.indexBuffer.size() << " indices." << std::endl;
     glBindVertexArray(chunkVAOs.at(chunk.position).vao);
     glBindTexture(GL_TEXTURE_2D_ARRAY, blockTextures.id);
 
@@ -102,7 +110,9 @@ void Renderer::drawBlocks() {
         }
         // check if chunk exists in VAO map
         if (chunkVAOs.find(chunk.position) == chunkVAOs.end()) {
-            createChunkVAO(chunk);
+            if (!createChunkVAO(chunk)) {
+                continue;
+            }
         }
 
         drawChunk(chunk, VP);

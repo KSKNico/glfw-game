@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     // int timer = 0;
     renderer.init();
     // enable wireframe mode
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!glfwWindowShouldClose(window)) {
         // Measure speed
         double currentTime = glfwGetTime();
